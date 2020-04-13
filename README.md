@@ -1,2 +1,2 @@
 # rNeighborGWAS
-Testing Neighbor Effects in Marker-Based Regressions (beta version)
+An R Package for Testing Neighbor Effects in Marker-Based Regressions (beta version)
