@@ -6,10 +6,11 @@ Authors@R: c(
 	person(given = "Eiji", family = "Yamamoto", role = "aut"),
     person(given = "Kentaro K.", family = "Shimizu", role = "aut"),
     person(given = "Atsushi J.", family = "Nagano", role = "aut"))
-Description: To incorporate neighbor genotypic identity into genome-wide association studies, the package provides a set of functions for variation partitioning and association mapping. The theoretical background of the method is described in Sato et al. (2019) <doi:10.1101/845735>. 
+Description: To incorporate neighbor genotypic identity into genome-wide association studies, the package provides a set of functions for variation partitioning and association mapping. The theoretical background of the method is described in Sato et al. (2019) <doi:10.1101/845735>.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
 Maintainer: Yasuhiro Sato <sato.yasuhiro.36c@kyoto-u.jp>
 Depends:

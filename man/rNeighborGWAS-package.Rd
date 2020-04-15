@@ -18,7 +18,7 @@ In addition to standard GWAS inputs, spatial information of individuals is requi
 See \code{vignette("rNeighborGWAS")} for how to use this package.
 }
 \references{
-Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2019) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on *Arabidopsis thaliana*. bioRxiv https://doi.org/10.1101/845735
+Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2019) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on \emph{Arabidopsis thaliana}. bioRxiv https://doi.org/10.1101/845735
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

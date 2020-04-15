@@ -14,30 +14,44 @@
 
 <title>rNeighborGWAS</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -46,9 +60,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -304,7 +318,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="overview" class="section level2">
 <h2>Overview</h2>
 <p>
-This R package provides a set of functions to test neighbor effects in marker-based regressions. In this vignette, we first estimate an effective range of neighbor effects, and then perform an association mapping of neighbor effects. See Sato, Yamamoto et al. (2019) for model description.
+This R package provides a set of functions to test neighbor effects in marker-based regressions. In this vignette, we first estimate an effective range of neighbor effects, and then perform an association mapping of neighbor effects. See Sato et al. (2019) for model description.
 </p>
 </div>
 <div id="input-files" class="section level2">
@@ -312,64 +326,64 @@ This R package provides a set of functions to test neighbor effects in marker-ba
 <p>
 First of all, let us see the data structure of input files necessary for the neighbor GWAS. Here is an example using a simulated dataset. Genotype data are a matrix including individuals (rows) x markers (columns) with -1 or +1 digit for bialleles. A spatial map indicates a individual distribution along x-axis and y-axis in a 2D space.
 </p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(rNeighborGWAS)</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co">#simulate &quot;fake_nei&quot; dataset using nei_simu()</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-5" title="5">g &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">sample</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>),<span class="dv">100</span><span class="op">*</span><span class="dv">1000</span>,<span class="dt">replace =</span> <span class="ot">TRUE</span>),<span class="dv">100</span>,<span class="dv">1000</span>)</a>
-<a class="sourceLine" id="cb1-6" title="6">gmap &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>),<span class="kw">rep</span>(<span class="dv">2</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>)),<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(g)))</a>
-<a class="sourceLine" id="cb1-7" title="7">x &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="kw">nrow</span>(g),<span class="dv">1</span>,<span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb1-8" title="8">y &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="kw">nrow</span>(g),<span class="dv">1</span>,<span class="dv">100</span>)</a>
-<a class="sourceLine" id="cb1-9" title="9">smap &lt;-<span class="st"> </span><span class="kw">cbind</span>(x,y)</a>
-<a class="sourceLine" id="cb1-10" title="10">grouping &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>), <span class="kw">rep</span>(<span class="dv">2</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>))</a>
-<a class="sourceLine" id="cb1-11" title="11">pheno &lt;-<span class="st"> </span><span class="kw">nei_simu</span>(<span class="dt">geno=</span>g, <span class="dt">smap=</span>smap, <span class="dt">scale=</span><span class="dv">44</span>,</a>
-<a class="sourceLine" id="cb1-12" title="12">                  <span class="dt">grouping=</span>grouping, <span class="dt">n_causal=</span><span class="dv">50</span>,</a>
-<a class="sourceLine" id="cb1-13" title="13">                  <span class="dt">pveB=</span><span class="fl">0.4</span>, <span class="dt">pve=</span><span class="fl">0.8</span></a>
-<a class="sourceLine" id="cb1-14" title="14">                  )</a>
-<a class="sourceLine" id="cb1-15" title="15"></a>
-<a class="sourceLine" id="cb1-16" title="16">fake_nei &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
-<a class="sourceLine" id="cb1-17" title="17">fake_nei[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>g</a>
-<a class="sourceLine" id="cb1-18" title="18">fake_nei[[<span class="dv">2</span>]] &lt;-<span class="st"> </span>gmap</a>
-<a class="sourceLine" id="cb1-19" title="19">fake_nei[[<span class="dv">3</span>]] &lt;-<span class="st"> </span>smap</a>
-<a class="sourceLine" id="cb1-20" title="20">fake_nei[[<span class="dv">4</span>]] &lt;-<span class="st"> </span><span class="kw">data.frame</span>(pheno,grouping)</a>
-<a class="sourceLine" id="cb1-21" title="21"><span class="kw">names</span>(fake_nei) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;geno&quot;</span>,<span class="st">&quot;gmap&quot;</span>,<span class="st">&quot;smap&quot;</span>,<span class="st">&quot;pheno&quot;</span>)</a>
-<a class="sourceLine" id="cb1-22" title="22"></a>
-<a class="sourceLine" id="cb1-23" title="23">fake_nei<span class="op">$</span>geno[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]</a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span></a>
-<a class="sourceLine" id="cb1-25" title="25"><span class="co">#&gt; [1,]   -1    1    1   -1   -1   -1   -1    1   -1     1</span></a>
-<a class="sourceLine" id="cb1-26" title="26"><span class="co">#&gt; [2,]    1    1    1   -1   -1   -1   -1    1   -1     1</span></a>
-<a class="sourceLine" id="cb1-27" title="27"><span class="co">#&gt; [3,]   -1    1   -1   -1   -1   -1    1    1    1    -1</span></a>
-<a class="sourceLine" id="cb1-28" title="28"><span class="co">#&gt; [4,]   -1   -1    1   -1    1   -1   -1    1    1     1</span></a>
-<a class="sourceLine" id="cb1-29" title="29"><span class="co">#&gt; [5,]    1   -1    1   -1   -1   -1   -1   -1   -1     1</span></a>
-<a class="sourceLine" id="cb1-30" title="30"><span class="kw">head</span>(fake_nei<span class="op">$</span>smap)</a>
-<a class="sourceLine" id="cb1-31" title="31"><span class="co">#&gt;             x        y</span></a>
-<a class="sourceLine" id="cb1-32" title="32"><span class="co">#&gt; [1,] 70.35128 31.43208</span></a>
-<a class="sourceLine" id="cb1-33" title="33"><span class="co">#&gt; [2,] 70.47472 42.45353</span></a>
-<a class="sourceLine" id="cb1-34" title="34"><span class="co">#&gt; [3,] 31.98069 56.06230</span></a>
-<a class="sourceLine" id="cb1-35" title="35"><span class="co">#&gt; [4,] 55.68317 78.83193</span></a>
-<a class="sourceLine" id="cb1-36" title="36"><span class="co">#&gt; [5,] 87.37672 39.53956</span></a>
-<a class="sourceLine" id="cb1-37" title="37"><span class="co">#&gt; [6,] 68.43125 98.53647</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(rNeighborGWAS)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#simulate &quot;fake_nei&quot; dataset using nei_simu()</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a>g &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">sample</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>),<span class="dv">100</span><span class="op">*</span><span class="dv">1000</span>,<span class="dt">replace =</span> <span class="ot">TRUE</span>),<span class="dv">100</span>,<span class="dv">1000</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a>gmap &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>),<span class="kw">rep</span>(<span class="dv">2</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>)),<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(g)))</span>
+<span id="cb1-7"><a href="#cb1-7"></a>x &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="kw">nrow</span>(g),<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb1-8"><a href="#cb1-8"></a>y &lt;-<span class="st"> </span><span class="kw">runif</span>(<span class="kw">nrow</span>(g),<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb1-9"><a href="#cb1-9"></a>smap &lt;-<span class="st"> </span><span class="kw">cbind</span>(x,y)</span>
+<span id="cb1-10"><a href="#cb1-10"></a>grouping &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>), <span class="kw">rep</span>(<span class="dv">2</span>,<span class="kw">nrow</span>(g)<span class="op">/</span><span class="dv">2</span>))</span>
+<span id="cb1-11"><a href="#cb1-11"></a>pheno &lt;-<span class="st"> </span><span class="kw">nei_simu</span>(<span class="dt">geno=</span>g, <span class="dt">smap=</span>smap, <span class="dt">scale=</span><span class="dv">44</span>,</span>
+<span id="cb1-12"><a href="#cb1-12"></a>                  <span class="dt">grouping=</span>grouping, <span class="dt">n_causal=</span><span class="dv">50</span>,</span>
+<span id="cb1-13"><a href="#cb1-13"></a>                  <span class="dt">pveB=</span><span class="fl">0.4</span>, <span class="dt">pve=</span><span class="fl">0.8</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a>                  )</span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a>fake_nei &lt;-<span class="st"> </span><span class="kw">list</span>()</span>
+<span id="cb1-17"><a href="#cb1-17"></a>fake_nei[[<span class="dv">1</span>]] &lt;-<span class="st"> </span>g</span>
+<span id="cb1-18"><a href="#cb1-18"></a>fake_nei[[<span class="dv">2</span>]] &lt;-<span class="st"> </span>gmap</span>
+<span id="cb1-19"><a href="#cb1-19"></a>fake_nei[[<span class="dv">3</span>]] &lt;-<span class="st"> </span>smap</span>
+<span id="cb1-20"><a href="#cb1-20"></a>fake_nei[[<span class="dv">4</span>]] &lt;-<span class="st"> </span><span class="kw">data.frame</span>(pheno,grouping)</span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="kw">names</span>(fake_nei) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;geno&quot;</span>,<span class="st">&quot;gmap&quot;</span>,<span class="st">&quot;smap&quot;</span>,<span class="st">&quot;pheno&quot;</span>)</span>
+<span id="cb1-22"><a href="#cb1-22"></a></span>
+<span id="cb1-23"><a href="#cb1-23"></a>fake_nei<span class="op">$</span>geno[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]</span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt; [1,]   -1    1    1   -1   -1   -1   -1    1   -1     1</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a><span class="co">#&gt; [2,]    1    1    1   -1   -1   -1   -1    1   -1     1</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a><span class="co">#&gt; [3,]   -1    1   -1   -1   -1   -1    1    1    1    -1</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="co">#&gt; [4,]   -1   -1    1   -1    1   -1   -1    1    1     1</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="co">#&gt; [5,]    1   -1    1   -1   -1   -1   -1   -1   -1     1</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="kw">head</span>(fake_nei<span class="op">$</span>smap)</span>
+<span id="cb1-31"><a href="#cb1-31"></a><span class="co">#&gt;             x        y</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a><span class="co">#&gt; [1,] 70.35128 31.43208</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a><span class="co">#&gt; [2,] 70.47472 42.45353</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="co">#&gt; [3,] 31.98069 56.06230</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a><span class="co">#&gt; [4,] 55.68317 78.83193</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a><span class="co">#&gt; [5,] 87.37672 39.53956</span></span>
+<span id="cb1-37"><a href="#cb1-37"></a><span class="co">#&gt; [6,] 68.43125 98.53647</span></span></code></pre></div>
 </div>
 <div id="variation-partitioning-across-a-space" class="section level2">
 <h2>Variation partitioning across a space</h2>
 <p>
 To estimate an effective range of neighbor effects, we calculate a heritability-like metric, that is the proportion of phenotypic variation explained by neighbor effects (PVE_nei). The optimal scale of neighbor effects is analyzed by how PVE_nei approaches to a plateau.
 </p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">min_s &lt;-<span class="st"> </span><span class="kw">min_dist</span>(fake_nei<span class="op">$</span>smap, fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping)</a>
-<a class="sourceLine" id="cb2-2" title="2">scale_seq &lt;-<span class="st"> </span><span class="kw">c</span>(min_s, <span class="kw">quantile</span>(<span class="kw">dist</span>(fake_nei<span class="op">$</span>smap),<span class="kw">c</span>(<span class="fl">0.2</span><span class="op">*</span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>))))</a>
-<a class="sourceLine" id="cb2-3" title="3"></a>
-<a class="sourceLine" id="cb2-4" title="4">pve_out &lt;-<span class="st"> </span><span class="kw">calc_PVEnei</span>(<span class="dt">geno=</span>fake_nei<span class="op">$</span>geno, <span class="dt">pheno=</span>fake_nei<span class="op">$</span>pheno[,<span class="dv">1</span>],</a>
-<a class="sourceLine" id="cb2-5" title="5">                       <span class="dt">smap=</span>fake_nei<span class="op">$</span>smap, <span class="dt">scale_seq=</span>scale_seq,</a>
-<a class="sourceLine" id="cb2-6" title="6">                       <span class="dt">addcovar=</span><span class="kw">as.matrix</span>(fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping),</a>
-<a class="sourceLine" id="cb2-7" title="7">                       <span class="dt">grouping=</span>fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping</a>
-<a class="sourceLine" id="cb2-8" title="8">                       )</a>
-<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; [1] &quot;scale = 21.9252977049056&quot;</span></a>
-<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt; [1] &quot;scale = 28.5810503901963&quot;</span></a>
-<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt; [1] &quot;scale = 43.2690896363057&quot;</span></a>
-<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt; [1] &quot;scale = 57.3188266134066&quot;</span></a>
-<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt; [1] &quot;scale = 72.5152771863378&quot;</span></a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="co">#&gt; [1] &quot;scale = 122.47901977593&quot;</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="kw">delta_PVE</span>(pve_out)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>min_s &lt;-<span class="st"> </span><span class="kw">min_dist</span>(fake_nei<span class="op">$</span>smap, fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>scale_seq &lt;-<span class="st"> </span><span class="kw">c</span>(min_s, <span class="kw">quantile</span>(<span class="kw">dist</span>(fake_nei<span class="op">$</span>smap),<span class="kw">c</span>(<span class="fl">0.2</span><span class="op">*</span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>))))</span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a>pve_out &lt;-<span class="st"> </span><span class="kw">calc_PVEnei</span>(<span class="dt">geno=</span>fake_nei<span class="op">$</span>geno, <span class="dt">pheno=</span>fake_nei<span class="op">$</span>pheno[,<span class="dv">1</span>],</span>
+<span id="cb2-5"><a href="#cb2-5"></a>                       <span class="dt">smap=</span>fake_nei<span class="op">$</span>smap, <span class="dt">scale_seq=</span>scale_seq,</span>
+<span id="cb2-6"><a href="#cb2-6"></a>                       <span class="dt">addcovar=</span><span class="kw">as.matrix</span>(fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping),</span>
+<span id="cb2-7"><a href="#cb2-7"></a>                       <span class="dt">grouping=</span>fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping</span>
+<span id="cb2-8"><a href="#cb2-8"></a>                       )</span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; scale = 21.9252977049056</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; scale = 28.5810503901963</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt; scale = 43.2690896363057</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; scale = 57.3188266134066</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt; scale = 72.5152771863378</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="co">#&gt; scale = 122.47901977593</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="kw">delta_PVE</span>(pve_out)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
 <pre><code>#&gt;      scale     PVEnei 
 #&gt; 43.2690896  0.8655676</code></pre>
@@ -379,16 +393,16 @@ To estimate an effective range of neighbor effects, we calculate a heritability-
 <p>
 Based on the estimated scale of neighbor effects, we then perform genome-wide association mapping of neighbor effects as follows.
 </p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">scale &lt;-<span class="st"> </span><span class="dv">43</span></a>
-<a class="sourceLine" id="cb4-2" title="2">gwas_out &lt;-<span class="st"> </span><span class="kw">neiGWAS</span>(<span class="dt">geno=</span>fake_nei<span class="op">$</span>geno, <span class="dt">pheno=</span>fake_nei<span class="op">$</span>pheno[,<span class="dv">1</span>],</a>
-<a class="sourceLine" id="cb4-3" title="3">                    <span class="dt">gmap=</span>fake_nei<span class="op">$</span>gmap, <span class="dt">smap=</span>fake_nei<span class="op">$</span>smap,</a>
-<a class="sourceLine" id="cb4-4" title="4">                    <span class="dt">scale=</span>scale, <span class="dt">addcovar=</span><span class="kw">as.matrix</span>(fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping),</a>
-<a class="sourceLine" id="cb4-5" title="5">                    <span class="dt">grouping=</span>fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping</a>
-<a class="sourceLine" id="cb4-6" title="6">                    )</a>
-<a class="sourceLine" id="cb4-7" title="7"></a>
-<a class="sourceLine" id="cb4-8" title="8">gaston<span class="op">::</span><span class="kw">manhattan</span>(gwas_out)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>scale &lt;-<span class="st"> </span><span class="dv">43</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>gwas_out &lt;-<span class="st"> </span><span class="kw">neiGWAS</span>(<span class="dt">geno=</span>fake_nei<span class="op">$</span>geno, <span class="dt">pheno=</span>fake_nei<span class="op">$</span>pheno[,<span class="dv">1</span>],</span>
+<span id="cb4-3"><a href="#cb4-3"></a>                    <span class="dt">gmap=</span>fake_nei<span class="op">$</span>gmap, <span class="dt">smap=</span>fake_nei<span class="op">$</span>smap,</span>
+<span id="cb4-4"><a href="#cb4-4"></a>                    <span class="dt">scale=</span>scale, <span class="dt">addcovar=</span><span class="kw">as.matrix</span>(fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping),</span>
+<span id="cb4-5"><a href="#cb4-5"></a>                    <span class="dt">grouping=</span>fake_nei<span class="op">$</span>pheno<span class="op">$</span>grouping</span>
+<span id="cb4-6"><a href="#cb4-6"></a>                    )</span>
+<span id="cb4-7"><a href="#cb4-7"></a></span>
+<span id="cb4-8"><a href="#cb4-8"></a>gaston<span class="op">::</span><span class="kw">manhattan</span>(gwas_out)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">gaston<span class="op">::</span><span class="kw">qqplot.pvalues</span>(gwas_out<span class="op">$</span>p)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>gaston<span class="op">::</span><span class="kw">qqplot.pvalues</span>(gwas_out<span class="op">$</span>p)</span></code></pre></div>
 <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAA8FBMVEUAAAAAADoAAGYAOjoAOmYAOpAAZpAAZrY6AAA6ADo6AGY6OgA6Ojo6OmY6OpA6ZpA6ZrY6kLY6kNtmAABmADpmAGZmOgBmOjpmOmZmZjpmZmZmZpBmkGZmkJBmkLZmkNtmtttmtv+QOgCQOjqQOmaQZgCQZjqQZmaQZpCQkDqQkGaQkLaQtpCQttuQtv+Q2/+2ZgC2Zjq2ZpC2kGa2kJC2tma227a229u22/+2/7a2/9u2///MzMzbkDrbkGbbtmbbtpDbtrbbttvb27bb29vb2//b/9vb////AAD/tmb/25D/27b/29v//7b//9v///9YAo4DAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAOL0lEQVR4nO2dCXvbxhGGV7JVyVfsSk6c2o0Tqa3TJm1JNW7iVECc1kklkCXx//9N98biIGYvYJf0fH4embgWuy9nZ68BSGrUqEjqDOQuBAQIAQFCQIAQECAEBAgBAUJAgBAQIAQECAEBQkCAEBAgBAQIAQFCQIAQECAEBAgBAUJAgBAQIAQECAEBQkCAEBAgBAQIAQFCQIAQECAEBAgBAUJAgOIC2v78ghDy+Kvbwc3OuVfkpHNg+4+boROvzwh55pSNftLeigpo8xkRuv9uYLOjfinWnx0PAapYEucu+cgVEM2XEitpZ3Pg7E4ploPn1SU5WjhnJEtAJSFHrDr9fMa/8c4mF2Xw/QthUqoUrBree33Ljpko27slIuNynR67gBrZJb2EWeyThUpaHNtc8Jtvr2kizzi1nx7Rj0+HjHpIEQHRbMly0Eyd3HY2VYGE6BEJqBQ7eIEMQJ3dGpC+XEiQofvpiVUnaRMQ/cvr+o1OedBYBxQREM3Eaa04HC06m+oTOX5Xvyf0kCjF6oz9LbmNGVXM3G1UMeNyIZrIqYRAP/6Gp3c+AGjJruPHWLZuWRKWXi0iIH5/IVamzqYuofjGj2/MUoj/DEDm7jagy7pFsmyd8eG7Rw17A5CsZ+xkmq37PziUanZAvGhsBy+FckT8jKbcrd0tQPpyXmlObuldLuXZ2zei8gwAomep+ieaDu7drBS/ipXPWLGPbzqbrRIy18FLoeoh9yUNoNbuPiC2WwJidUx8Fazk97/9cNEBxA9WpHFea9H5OPq7XamiO2ma8aPfEe2k9WarhPEsiFWbv/ATBKbNICBmZ01G1988IsS2IxC9mZff0HlvU5Ywsg8StYcVVjRohpMW11VEeuZWVrd/sm3GYgKSbalsnrubXKOtmEHCthUT+zg1fsn6qkmaX8128FaMfVesu0GB/faWfW0JLEhVb1bDmRPsbKrSyF5Irx/EPUW/H9QB1OvEVHJTd9wN9kJNP4gldN3pSgGaZLD6e9l37mzyEh7/izY2T7s96S/51ddGJ7nZ3fZB6nItXX1YK3b/b6WuvfWKfkFPvxct/PrNmbruPfNATxL0pA1trz+5HdzcMdyyVeDlPpp5PggBAUJAgBDQwQkBAUJAgBAQIAQECAEBQkCAEBAgBAQIAQFCQIAQECAEBAgBAUJAgBAQIAHow9ePqV65rFl/LGKA+DQ/172vUucnO5F6e330xQ+/ss//+/Ddo2exIrMORaS+blnNe6doyY9A5KdFe8fqyyT5yFbk1+6ef2MlM4XNPCAJSEXboLoSgCoeHlC6xiN/DOKAtlci/mqJNtQTB7R5vuAb1ewLu/mrZUFlsAWRnFQMSxx0AlRXPIitNCMdB6WiuHZaWk6N4k487KAbICOacDR8olSBYtWuOPWMAO3gUxQ8k44WZKftlcayqzLmDohVO57LSQBtLnQV3OXO8wPU9kUegN52TGHzeue5e2VBBhESBGjzqlXU9eejPkiaUP4+yADSJeTqg9YvnukB6/rNeHis8uY7uwOZAGpZTAuQTyvG4ovvPX754vEjQp4GdoTyB8SqWO3qpHmUtctziuPJJVfHK3d6jPwU51Zs+8svLlkoc27F2g17r0fNz5mkmR9JRStKcmEqxnXHT/IAJB46C5zxyAAQgOfO14LkgHX1SZCbzhwQxeNdxTaf3hj/jakasbP0gEb5hPggZUEPxwAtCTlnNmYMOnYkl0qQ+fgDks+fjfogNuO4FLOzmQ41QPMJAASL283qwaLOdrAKm8/EgPhjhGxgkqcF2eCZtB9UNs+15zhYhWtXCCA1Dh2dt5cLQ9XOudmUgKzMJ8CC1NJGkBICssQTUMWqCKti6QBZ1a4wQDGUDJCt+fgBMlY1oIUfm+QSqEeBDeIH8fhZkJhCrdg7VZzeprYjudnV51P0poFCAG2vxLsLaO8mcHE1DaAhPtR8dhByy6isYqJm0f6x3/J82vmgPgPCnXM8QGo9h1lQWPxCCkANFj55yP6SuyIqoMYHqcrmqwSAChWOIPwOq10ktg+S7Rh7x1FgAMzsgKSlMKshyvtwTruCO1wzuu/9IMlHIGIbdyPep2iu+1gAFR1Ad0MLYX087oD4bFmEEMV5AWnXTEStGvM+vhk1nTQcQGWZ3EwqpGuWDog0rRhAxyWj3WY+MM9zAiLCdohqxYYHFoN4AjqKoZkOvN7hTsJuVP0aGrbvpOOS0X21ICJacuWAxsalYRndUx8k6pb+54rn4FuxgiivzI1okE+kjO5lP0g0WpLQ7kmxMR00oEK17qw998LjBMg2SNoyuelldnqGzMcqkcOND5Ijdv53AI9tMgdbxYpCV7CB2mWfzqECKgo53zzknF0S8gh/+U+MZ8UmBlQUet6wi8cxJe8AqkBNC0jw0R7aH89hApLm08xq+OOZCJBYNKvGugMTAlLVi+jpVX88UwIqxevqZw/B0/Zz165gnslNBkiimTuAqpDuRw6/AunUEwJanXFAM4fgFY3/IY0BhaR4WBZUNIAaAwpL0qMf9GewHyRGbaf1zCF4bTzSfkITnaonzX6JZrH7ebopAGk8Ru0KT/VwhhqG9agOYoxkDwWQUbuUAcVJeGpAMz0v1vU+JBKe2SfMppkPKnruOV7afuEv4bP2MQFJPneT0PcOwZvrvrAmNJ/6AFZWe3hStSatldXwFyzFKkafT1JA6vU4gA+ycOdxitGnE301wCsED7Sf7RVUB6OUo08n/mrJRP0gMMYzRkHm4DNZR3H3g1BeyQ1ooHZNMQL2qGInt8uwxxCc7rtLc1gPk6uTPlqU7GdzgwkFlqYzMJ2KTu3TzLNOYmCYvct9BzV529XIvaPIACXuKE7b82nLz4KSdhSn7Tl35eWDkobgtYelk4eJeHUUE4bgdYbt00fR7Fd8UBfPDGFYezXl2sUzR5iaaysW9pSYx30N9Rr3SHkZlaMFLeN4IC9AKfD4VDH+hq5gQ3Iu3hzjriF5+SB4NiPefYVS4dkXC0rHx7knncIHzTRuH9YetGIp8fhO2s9536R4fJd9ZrtvQucj5TpYjfV7EVb3TU6ndrcgmdUZmvnUdUtlI/qJkZLLhE+ugHLBk+uqRjZ4Zl/VsClzPtbDc+N04gyrGnnhyW9VIzM8ua1q5EanzmtVIzvrYcpnVSNLPBOGv4hS2j8vlimfiQC5/75YnnRqZ0CsB1SCIWbOvw6VLR73VY2T29XZab0cnzdz/H2xTCuXkHs/iMWOAf0gNwvKGY8PIPYGRagn7fD7Ynnjca9ip5sLNhaDpqZtf18sdzweTpp2gkJfU6qTy9r5SKWcD9oHPpMDGnlebB/weA41/IeqJpB9wOM+WLV6VsMuub3g47lwGGe6Yw/w+C4cghNmdoPV/PG4W5DdE4d79WPY43L2QTbPrNoMNfZG9oDsn3q2GKyqRD0OpT8SfLqFBYGJpscwISCLwSqYaHoMfoAsX3YLDlbBPKTH4AUo2uuSwTykx+ADKN4Lt8E8pMfgAyjeiwXAPKTHgBbkfWTkdPRB0OmxXtl+eNqbwVMqISBACAgQAgKEgAAhIEAICBACAoSAACEgQAgIEAICFBNQZY53K+vB7+qhnoWyu4gvX+pJccsblX6ZiwmILavppbXWxqg2F3qazu6i7RU9pVSPsFveiIWjeGQuJiAx6ybjQFsbo6qa1TjLi8TvDsgAHMtr+INMagHZPnN1TECtfLc2xlSRcz3Ra30Rv1BYgMs1CpDTfSICerCo9bR2awNQA8jhIvWz3S7XqPAep/vEAyS+UvnFtjagC1VOnS6SXtr+mko7dpf77CugyvTRtjfaXolFiUSA5qxizdK3U3VRfitNFfNz0rUJyPaisukFOTlc+bs7iZy0ZzNvALK9yFyecuoaVE5dA6H0HUXD1u0uWp2ZoSWWN2Lhlzp8J01HUffmRXejtO7Nc0AOF5UiwkQ9GmB5I/aatkv3zOFgFRICAoSAACEgQAgIEAIChIAAISBACAgQAgKEgAAhIEAICBACAoSAACEgQAgIEAIChIAAISBACAjQIQLavm2WBNevAx+BO0BA61cmk83LsKcoMwJU9R7n6y/uWfw8webzNpHVJ0E2lA+ggbJ7AeotKVuuMe/QwQGSAQqjqbhoekClCEllwRSbi/PVg7+eyUimkhgfTtlDoeyd38bOo2+GAVXqnOXAOSJow7hNHfbzsZMDYnFvLNxAvrOachAvtdQH+AdaCF52vZNF2FX9BXT1Skz+RsOhc2SQVHObJm7KT1MDEl8fi0+ojn98Lktf6xfo0wPqC2Zl1ztFRVkOARIxGrTeDJ7D3gdZ181t6tBfBZsakHAAvCxLFjYnA3WOFvqAchrcONROERIz6IPE+bvOYa+krY3b1DKu2luTA5JvJrqUb5KT4W8UkDog9qjaI3eWZuGXcu+pAYh+MM7ZfHrDb3WpAanb1NkD0pnbXr2kJWoAqQN9C6pVUJWtBfFg/c3zxerhjapiLUA5V7GmXS5P/ku9h3AOS+aDLtUZpg+SO2UYoYUPouds//gjtSDaIdz+YaGdtLxNnbuTFoWknpQbCPO+LPxNtWLcxbIP26tTDqq1074VY1WsYnsuVTOvb5N9M897NjTTIkiQdne+OCMi46V6aVop/MtS9YPUTpt+0PE/2dkGIFUD9W2y7yi21e/oBqpSgEQVkyML8zb7NdSICIgnJeoPAyScNP38YtG6zepJ0HB+jwGJToFwM7qZr8VwvrnN9uuDme6Ipu3bd/rz+lucMJtWCAgQAgKEgAAhIEAICBACAoSAACEgQAgIEAIChIAAISBACAgQAgKEgAAhIEAICBACAoSAACEgQAgIEAIChIAA/R9Fz6vMgdv1LQAAAABJRU5ErkJggg==" /><!-- --></p>
 </div>
 <div id="references" class="section level2">

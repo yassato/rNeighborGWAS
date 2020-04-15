@@ -74,7 +74,7 @@ calc_PVEnei = function(pheno, geno, smap, scale_seq, addcovar=NULL, grouping=rep
   }
 
   for(s in scale_seq) {
-    if(class(s)=="numeric") { cat("scale =", s, "\n") }
+    if(class(s)=="numeric") { message("scale = ", s, "\n") }
     g_nei <- nei_coval(geno=geno, smap=smap, scale=s, alpha=Inf, kernel="exp", grouping=grouping, n_core=n_core)
 
     q <- ncol(geno)

@@ -35,9 +35,9 @@ calc_PVEnei(
 \value{
 A numeric matrix including a given spatial scale, PVE by neighbor effects, and p-values.
 \itemize{
- \item{\code{scale}} {Maximum neighbor distance given as an argument}
- \item{\code{PVEnei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects}
- \item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects}
+\item{\code{scale}} {Maximum neighbor distance given as an argument}
+\item{\code{PVEnei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects}
+\item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects}
 }
 }
 \description{

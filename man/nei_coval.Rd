@@ -47,7 +47,7 @@ grouping <- c(rep(1,nrow(g)/2), rep(2,nrow(g)/2))
 g_nei <- nei_coval(g,smap,44,grouping = grouping)
 }
 \references{
-Nathan R, Klein E, Robledo-Arnuncio JJ, Revilla E, (2012) Dispersal kernels: review. In: Clobert J, Baguette M, Benton TG, Bullock JM (Eds.), *Dispersal Ecology and Evolution*. Oxford University Press, pp.186-210.
+Nathan R, Klein E, Robledo-Arnuncio JJ, Revilla E, (2012) Dispersal kernels: review. In: Clobert J, Baguette M, Benton TG, Bullock JM (Eds.), \emph{Dispersal Ecology and Evolution}. Oxford University Press, pp.186-210.
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

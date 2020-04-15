@@ -41,9 +41,9 @@ neiGWAS(
 \value{
 A data.frame including the chromosome number, marker position, and p-values.
 \itemize{
- \item{\code{chr}} {Chromosome number}
- \item{\code{pos}} {Marker position}
- \item{\code{p}} {p-value by a likelihood ratio test between models with or without neighbor effects}
+\item{\code{chr}} {Chromosome number}
+\item{\code{pos}} {Marker position}
+\item{\code{p}} {p-value by a likelihood ratio test between models with or without neighbor effects}
 }
 }
 \description{

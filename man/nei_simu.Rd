@@ -18,7 +18,7 @@ nei_simu(
 )
 }
 \arguments{
-\item{geno}{An individual x marker matrix. Bialleles (*i.e.*, A or a) must be converted into -1 or 1 digit.}
+\item{geno}{An individual x marker matrix. Bialleles (\emph{i.e.}, A or a) must be converted into -1 or 1 digit.}
 
 \item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along a x-axis and y-axis, respectively.}
 

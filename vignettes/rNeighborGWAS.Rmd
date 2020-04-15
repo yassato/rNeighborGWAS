@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ## Overview
-<p>This R package provides a set of functions to test neighbor effects in marker-based regressions. In this vignette, we first estimate an effective range of neighbor effects, and then perform an association mapping of neighbor effects. See Sato, Yamamoto et al. (2019) for model description.</p>
+<p>This R package provides a set of functions to test neighbor effects in marker-based regressions. In this vignette, we first estimate an effective range of neighbor effects, and then perform an association mapping of neighbor effects. See Sato et al. (2019) for model description.</p>
 
 ## Input files
 <p>First of all, let us see the data structure of input files necessary for the neighbor GWAS. Here is an example using a simulated dataset. Genotype data are a matrix including individuals (rows) x markers (columns) with -1 or +1 digit for bialleles. A spatial map indicates a individual distribution along x-axis and y-axis in a 2D space.</p>
