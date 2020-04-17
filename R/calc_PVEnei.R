@@ -18,7 +18,7 @@
 #' @details
 #' This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
 #' If \code{"binary"} is selected, \code{logistic.mm.aireml()} is called via the \code{gaston} package.
-#' In such a case, \code{PVEnei} below is given by the variance component parameter \eqn{\sigma} (i.e., not a proportional value) and p-values are not provided.
+#' In such a case, \code{PVEnei} below is replaced by the ratio of variance component parameters \eqn{\sigma^2_2/\sigma^2_1} and p-values are not provided.
 #' @references
 #' Perdry H, Dandine-Roulland C. (2020) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. https://CRAN.R-project.org/package=gaston
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
@@ -74,7 +74,7 @@ calc_PVEnei = function(pheno, geno, smap, scale_seq, addcovar=NULL, grouping=rep
   }
 
   for(s in scale_seq) {
-    if(class(s)=="numeric") { message("scale = ", s, "\n") }
+    if(class(s)=="numeric") { message("scale = ", round(s,3), "\n") }
     g_nei <- nei_coval(geno=geno, smap=smap, scale=s, alpha=Inf, kernel="exp", grouping=grouping, n_core=n_core)
 
     q <- ncol(geno)
@@ -97,7 +97,7 @@ calc_PVEnei = function(pheno, geno, smap, scale_seq, addcovar=NULL, grouping=rep
       p_val <- stats::pchisq(2*(res$logL - res0$logL),1,lower.tail=FALSE)
     } else if(response=="binary"){
       res <- gaston::logistic.mm.aireml(Y=pheno,X=X,K=list(K_self,K_nei),verbose=FALSE)
-      PVEnei <- res$tau[2]
+      PVEnei <- res$tau[2]/res$tau[1]
       p_val <- NA
     } else {
       warning("error: reponse should be 'quantitative' or 'binary'")

@@ -1,6 +1,6 @@
 Package: rNeighborGWAS
 Title: Testing Neighbor Effects in Marker-Based Regressions
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person(given = "Yasuhiro", family = "Sato", role = c("aut", "cre"), email = "sato.yasuhiro.36c@kyoto-u.jp", comment = c(ORCID = "0000-0002-6466-723X")),
 	person(given = "Eiji", family = "Yamamoto", role = "aut"),
@@ -23,5 +23,6 @@ Imports:
     RcppParallel
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr

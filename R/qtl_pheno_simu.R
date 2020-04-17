@@ -10,14 +10,14 @@
 #' @param pve Proportion of variance explained by all genetic effects (i.e., b_.. and eigenK_..)
 #' @return A list of simulated phenotypes
 #' \itemize{
-#' \item{y}{Simulated phenotype values}
-#' \item{beta_self}{major self-genetic effects}
-#' \item{beta_nei}{major neighbor effects}
-#' \item{sigma_self}{self polygenic effects}
-#' \item{sigma_nei}{neighbor polygenic effects}
-#' \item{epsilon}{residuals}
-#' \item{res_pveB}{realized proportion of variation explained by major-effect genes}
-#' \item{res_pve}{realized proportion of variation explained by major-effect genes and polygenic effects}
+#' \item{\code{y}} {Simulated phenotype values}
+#' \item{\code{beta_self}} {major self-genetic effects}
+#' \item{\code{beta_nei}} {major neighbor effects}
+#' \item{\code{sigma_self}} {self polygenic effects}
+#' \item{\code{sigma_nei}} {neighbor polygenic effects}
+#' \item{\code{epsilon}} {residuals}
+#' \item{\code{res_pveB}} {realized proportion of variation explained by major-effect genes}
+#' \item{\code{res_pve}} {realized proportion of variation explained by major-effect genes and polygenic effects}
 #' }
 #' @author Eiji Yamamoto, and Yasuhiro Sato
 qtl_pheno_simu = function(b_self, b_nei, eigenK_self, eigenK_nei, b_ratio = c(1,1), pveB, pve)

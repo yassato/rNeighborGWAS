@@ -10,8 +10,6 @@
 #' @param n_core No. of cores for a multi-core computation. This does not work for Windows OS. Default is a single-core computation.
 #' @return A numeric matrix for neighbor covariates, with no. of individuals x markers.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-#' @references
-#' Nathan R, Klein E, Robledo-Arnuncio JJ, Revilla E, (2012) Dispersal kernels: review. In: Clobert J, Baguette M, Benton TG, Bullock JM (Eds.), *Dispersal Ecology and Evolution*. Oxford University Press, pp.186-210.
 #' @import parallel
 #' @examples
 #' set.seed(1)
