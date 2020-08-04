@@ -7,9 +7,9 @@
 min_dist(smap, grouping = rep(1, nrow(smap)))
 }
 \arguments{
-\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along a x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along an x-axis and y-axis, respectively.}
 
-\item{grouping}{A integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{A positive integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 }
 \value{
 Return a scalar of the minimum Euclidian distance that allows all individuals to have at least one neighbor.

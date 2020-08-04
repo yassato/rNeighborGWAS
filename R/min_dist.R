@@ -1,8 +1,8 @@
 #' Calculating the minimum distance
 #'
 #' A function to calculate a Euclidian distance including at least one neighbor for all individuals.
-#' @param smap A matrix showing a spatial map for individuals. The first and second column include spatial points along a x-axis and y-axis, respectively.
-#' @param grouping A integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.
+#' @param smap A matrix showing a spatial map for individuals. The first and second column include spatial points along an x-axis and y-axis, respectively.
+#' @param grouping A positive integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @return Return a scalar of the minimum Euclidian distance that allows all individuals to have at least one neighbor.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @examples
@@ -25,11 +25,29 @@
 #' min_s <- min_dist(fake_nei$smap, fake_nei$pheno$grouping)
 #' @export
 min_dist = function(smap, grouping=rep(1,nrow(smap))) {
-  min_d_i <- c()
-  for(i in 1:nrow(smap)) {
-    id <- c(1:nrow(smap))[grouping==grouping[i]]
-    d_i <- mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
-    min_d_i <- c(min_d_i, min(d_i[d_i!=0]))
+  g.unique <- unique(grouping)
+  g.valid <- which(vapply(g.unique, function(gi) sum(grouping == gi), 0L) > 1L)
+  if (length(g.valid) < length(g.unique)) {
+    if (length(g.valid) == 0L) {
+      warning("all groups with only one individual.")
+      return(0)
+    } else {
+      warning("group(s) with only one individual were excluded.")
+    }
   }
-  return(max(min_d_i)[1])
+  min_d_i <- unlist(lapply(g.unique[g.valid], function(g) {
+    g.smap <- smap[grouping==g,,drop=F]
+    d2 <- outer(g.smap[,1], g.smap[,1], "-")^2 + outer(g.smap[,2], g.smap[,2], "-")^2
+    apply(d2, 2, function(x) min(Inf,x[x!=0]))
+  }))
+  min_d_i.finite <- is.finite(min_d_i)
+  if (sum(!min_d_i.finite) > 0) {
+    if (all(!min_d_i.finite)) {
+      warning("all groups in which all individuals were in the same position.")
+      return(0)
+    } else {
+      warning("group(s) in which all individuals were in the same position were excluded.")
+    }
+  }
+  return(sqrt(max(0, min_d_i[min_d_i.finite])))
 }
