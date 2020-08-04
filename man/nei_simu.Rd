@@ -10,7 +10,7 @@ nei_simu(
   scale,
   alpha = Inf,
   grouping = grouping,
-  kernel = c("exp", "gaussian"),
+  kernel = "exp",
   n_causal,
   pveB,
   pve,
@@ -18,17 +18,17 @@ nei_simu(
 )
 }
 \arguments{
-\item{geno}{An individual x marker matrix. Bialleles (i.e., A or a) must be converted into -1 or 1 digit.}
+\item{geno}{An individual x marker matrix. Bialleles (\emph{i.e.}, A or a) must be converted into -1 or 1 digit.}
 
-\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along an x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along a x-axis and y-axis, respectively.}
 
 \item{scale}{A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.}
 
 \item{alpha}{Distance decay coefficient \eqn{\alpha} in a dispersal kernel. Default is set at Inf, meaning no distance decay.}
 
-\item{grouping}{A positive integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{A integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
-\item{kernel}{An option to select a negative exponential \code{"exp"} or Gaussian \code{"gaussian"} for a dispersal kernel of neighbor effects.}
+\item{kernel}{An option to select a negative exponential kernel \code{"exp"} or Gaussian kernel \code{"gaussian"}.}
 
 \item{n_causal}{No. of causal markers in a simulated phenotype}
 
@@ -51,7 +51,7 @@ gmap <- cbind(c(rep(1,nrow(g)/2),rep(2,nrow(g)/2)),c(1:ncol(g)))
 x <- runif(nrow(g),1,100)
 y <- runif(nrow(g),1,100)
 smap <- cbind(x,y)
-grouping <- c(rep(1,nrow(g)/2),rep(2,nrow(g)/2))
+grouping <- c(rep(1,nrow(g)/2), rep(2,nrow(g)/2))
 pheno <- nei_simu(geno=g,smap=smap,scale=44,grouping=grouping,n_causal=50,pveB=0.4,pve=0.8)
 
 fake_nei <- list()

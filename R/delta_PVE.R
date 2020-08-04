@@ -6,16 +6,15 @@
 #' @param ... Arguments to be passed to \code{plot()}.
 #' @return Estimated effective scale and proportion of phenotypic variation explained by neighbor effects at that scale.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-#' @seealso \code{\link{calc_PVEnei}}
+#' @seealso calc_PVEnei
 #' @export
 delta_PVE = function(res, fig=TRUE, ...) {
-  res <- res[order(res$scale),]
   pve <- res$PVEnei[-1]
   s <- res$scale[-1]
   delta_pve <- pve - c(0,pve[1:(length(pve)-1)])
 
-  est_scale <- s[delta_pve==max(delta_pve)][1]
-  est_pve <- pve[delta_pve==max(delta_pve)][1]
+  est_scale <- s[delta_pve==max(delta_pve)]
+  est_pve <- pve[delta_pve==max(delta_pve)]
 
   if(fig==TRUE) {
     args <- list(...)
