@@ -2,22 +2,22 @@
 #'
 #' A function to simulate phenotype values with multiple sources of variation controlled
 #' @param b_self A n x 1 genotype vector to design major additive genetic effect.
-#' @param b_nei A vector of explanatory variable for beta_2 (neighbor effects)
-#' @param eigenK_self Products of function 'eigen' with self covariance matrices that were used as explanatory variables for the phenotype.
-#' @param eigenK_nei Products of function 'eigen' with neighbor covariance matrices that were used as explanatory variables for the phenotype.
-#' @param b_ratio Ratio for contribution of engenK_self,  eigenK_nei and eigenK_sxn to the phenotype.
-#' @param pveB Proportion of variance explained by genetic effect designed by b_.. vector.
+#' @param b_nei A vector of an explanatory variable for neighbor effects
+#' @param eigenK_self Products of \code{eigen()} with self covariance matrices that are used as explanatory variables for the phenotype.
+#' @param eigenK_nei Products of \code{eigen()} with neighbor covariance matrices that are used as explanatory variables for the phenotype.
+#' @param b_ratio Ratio for contributions of \code{eigenK_self} and \code{eigenK_nei} to the phenotype.
+#' @param pveB Proportion of variance explained by genetic effects attributable to the fixed effects (i.e., b_.. vector).
 #' @param pve Proportion of variance explained by all genetic effects (i.e., b_.. and eigenK_..)
 #' @return A list of simulated phenotypes
 #' \itemize{
-#' \item{y}{Simulated phenotype values}
-#' \item{beta_self}{major self-genetic effects}
-#' \item{beta_nei}{major neighbor effects}
-#' \item{sigma_self}{self polygenic effects}
-#' \item{sigma_nei}{neighbor polygenic effects}
-#' \item{epsilon}{residuals}
-#' \item{res_pveB}{realized proportion of variation explained by major-effect genes}
-#' \item{res_pve}{realized proportion of variation explained by major-effect genes and polygenic effects}
+#' \item{\code{y}} {Simulated phenotype values}
+#' \item{\code{beta_self}} {major self-genetic effects}
+#' \item{\code{beta_nei}} {major neighbor effects}
+#' \item{\code{sigma_self}} {self polygenic effects}
+#' \item{\code{sigma_nei}} {neighbor polygenic effects}
+#' \item{\code{epsilon}} {residuals}
+#' \item{\code{res_pveB}} {realized proportion of variation explained by major-effect genes}
+#' \item{\code{res_pve}} {realized proportion of variation explained by major-effect genes and polygenic effects}
 #' }
 #' @author Eiji Yamamoto, and Yasuhiro Sato
 qtl_pheno_simu = function(b_self, b_nei, eigenK_self, eigenK_nei, b_ratio = c(1,1), pveB, pve)
@@ -26,8 +26,13 @@ qtl_pheno_simu = function(b_self, b_nei, eigenK_self, eigenK_nei, b_ratio = c(1,
   beta_nei <- b_nei / stats::sd(b_nei)
   Maj_eff <- b_ratio[1]*beta_self + b_ratio[2]*beta_nei
 
-  sigma_self <- eigenK_self$vectors %*% stats::rnorm(nrow(eigenK_self$vectors), sd = sqrt(b_ratio[1]*eigenK_self$values))
-  sigma_nei <- eigenK_nei$vectors %*% stats::rnorm(nrow(eigenK_nei$vectors), sd = sqrt(b_ratio[2]*eigenK_nei$values))
+  eigenK_self_values <- eigenK_self$values
+  eigenK_self_values[eigenK_self_values < 0] <- 0
+  eigenK_nei_values <- eigenK_nei$values
+  eigenK_nei_values[eigenK_nei_values < 0] <- 0
+
+  sigma_self <- eigenK_self$vectors %*% stats::rnorm(nrow(eigenK_self$vectors), sd = sqrt(b_ratio[1]*eigenK_self_values))
+  sigma_nei <- eigenK_nei$vectors %*% stats::rnorm(nrow(eigenK_nei$vectors), sd = sqrt(b_ratio[2]*eigenK_nei_values))
   sigma_all <- sigma_self + sigma_nei
   sigma_all <- sigma_all / stats::sd(sigma_all)
   adj.sigma = function(adj, Maj_eff, sigma_all, pveB, pve)	{

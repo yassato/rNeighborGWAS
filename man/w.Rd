@@ -4,14 +4,14 @@
 \alias{w}
 \title{Calculating a distance decay weight}
 \usage{
-w(s, a, kernel = "exp")
+w(s, a, kernel = c("exp", "gaussian"))
 }
 \arguments{
 \item{s}{A numeric scalar indicating spatial distance at which the distance decay is referred}
 
 \item{a}{A numeric scalar indicating a decay coefficient}
 
-\item{kernel}{An option to select a negative exponential kernel \code{"exp"} or Gaussian kernel \code{"gaussian"}.}
+\item{kernel}{An option to select a negative exponential \code{"exp"} or Gaussian \code{"gaussian"} for a dispersal kernel of neighbor effects.}
 }
 \value{
 A numeric scalar for a distance decay weight.

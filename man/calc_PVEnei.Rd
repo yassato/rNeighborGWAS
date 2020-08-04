@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_PVEnei.R
 \name{calc_PVEnei}
 \alias{calc_PVEnei}
-\title{Calculating proportion of phenotypic variation explained (PVE) by neighbor effects}
+\title{Calculating phenotypic variation explained by neighbor effects}
 \usage{
 calc_PVEnei(
   pheno,
@@ -11,7 +11,7 @@ calc_PVEnei(
   scale_seq,
   addcovar = NULL,
   grouping = rep(1, nrow(smap)),
-  response = "quantitative",
+  response = c("quantitative", "binary"),
   n_core = 1L
 )
 }
@@ -20,13 +20,13 @@ calc_PVEnei(
 
 \item{geno}{An individual x marker matrix. Bialleles (i.e., A or a) must be converted into -1 or 1 digit.}
 
-\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along a x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along an x-axis and y-axis, respectively.}
 
 \item{scale_seq}{A numeric vector including a set of the maximum spatial distance between a focal individual and neighbors to define neighbor effects. A scalar is also allowed.}
 
 \item{addcovar}{An optional matrix including additional non-genetic covariates. It contains no. of individuals x no. of covariates.}
 
-\item{grouping}{A integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{A positive integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{response}{An option to select if the phenotype is a \code{"quantitative"} trait subject to linear models, or a \code{"binary"} trait subject to logistic models.}
 
@@ -36,8 +36,8 @@ calc_PVEnei(
 A numeric matrix including a given spatial scale, PVE by neighbor effects, and p-values.
 \itemize{
 \item{\code{scale}} {Maximum neighbor distance given as an argument}
-\item{\code{PVEnei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects}
-\item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects}
+\item{\code{PVEnei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects. RVE is returned when \code{response = "binary"}}
+\item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects. NA when \code{response = "binary"}}
 }
 }
 \description{
@@ -46,7 +46,7 @@ A function to calculate PVE by neighbor effects for a series of neighbor distanc
 \details{
 This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
 If \code{"binary"} is selected, \code{logistic.mm.aireml()} is called via the \code{gaston} package.
-In such a case, \code{PVEnei} below is given by the variance component parameter \eqn{\sigma} (i.e., not a proportional value) and p-values are not provided.
+In such a case, \code{PVEnei} below is replaced by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVE_nei = \eqn{\sigma_2^2}/\eqn{\sigma_1^2} and p-values are not provided.
 }
 \examples{
 set.seed(1)
@@ -55,7 +55,7 @@ gmap <- cbind(c(rep(1,nrow(g)/2),rep(2,nrow(g)/2)),c(1:ncol(g)))
 x <- runif(nrow(g),1,100)
 y <- runif(nrow(g),1,100)
 smap <- cbind(x,y)
-grouping <- c(rep(1,nrow(g)/2), rep(2,nrow(g)/2))
+grouping <- c(rep(1,nrow(g)/2),rep(2,nrow(g)/2))
 pheno <- nei_simu(geno=g,smap=smap,scale=44,grouping=grouping,n_causal=50,pveB=0.4,pve=0.8)
 
 fake_nei <- list()

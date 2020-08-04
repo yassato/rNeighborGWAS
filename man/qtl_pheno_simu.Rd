@@ -17,29 +17,29 @@ qtl_pheno_simu(
 \arguments{
 \item{b_self}{A n x 1 genotype vector to design major additive genetic effect.}
 
-\item{b_nei}{A vector of explanatory variable for beta_2 (neighbor effects)}
+\item{b_nei}{A vector of an explanatory variable for neighbor effects}
 
-\item{eigenK_self}{Products of function 'eigen' with self covariance matrices that were used as explanatory variables for the phenotype.}
+\item{eigenK_self}{Products of \code{eigen()} with self covariance matrices that are used as explanatory variables for the phenotype.}
 
-\item{eigenK_nei}{Products of function 'eigen' with neighbor covariance matrices that were used as explanatory variables for the phenotype.}
+\item{eigenK_nei}{Products of \code{eigen()} with neighbor covariance matrices that are used as explanatory variables for the phenotype.}
 
-\item{b_ratio}{Ratio for contribution of engenK_self,  eigenK_nei and eigenK_sxn to the phenotype.}
+\item{b_ratio}{Ratio for contributions of \code{eigenK_self} and \code{eigenK_nei} to the phenotype.}
 
-\item{pveB}{Proportion of variance explained by genetic effect designed by b_.. vector.}
+\item{pveB}{Proportion of variance explained by genetic effects attributable to the fixed effects (i.e., b_.. vector).}
 
 \item{pve}{Proportion of variance explained by all genetic effects (i.e., b_.. and eigenK_..)}
 }
 \value{
 A list of simulated phenotypes
 \itemize{
-\item{y}{Simulated phenotype values}
-\item{beta_self}{major self-genetic effects}
-\item{beta_nei}{major neighbor effects}
-\item{sigma_self}{self polygenic effects}
-\item{sigma_nei}{neighbor polygenic effects}
-\item{epsilon}{residuals}
-\item{res_pveB}{realized proportion of variation explained by major-effect genes}
-\item{res_pve}{realized proportion of variation explained by major-effect genes and polygenic effects}
+\item{\code{y}} {Simulated phenotype values}
+\item{\code{beta_self}} {major self-genetic effects}
+\item{\code{beta_nei}} {major neighbor effects}
+\item{\code{sigma_self}} {self polygenic effects}
+\item{\code{sigma_nei}} {neighbor polygenic effects}
+\item{\code{epsilon}} {residuals}
+\item{\code{res_pveB}} {realized proportion of variation explained by major-effect genes}
+\item{\code{res_pve}} {realized proportion of variation explained by major-effect genes and polygenic effects}
 }
 }
 \description{

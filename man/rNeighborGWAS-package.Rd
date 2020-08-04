@@ -7,7 +7,7 @@
 \title{rNeigborGWAS: Testing Neighbor Effects in Marker-based Regressions}
 \description{
 This package provides a set of functions to test neighbor effects in genome-wide association studies.
-The neighbor effects are estimated using the Ising model of ferromagnetics.
+The neighbor effects are estimated using the Ising model of ferromagnetism.
 See Sato et al. (2019) for motivation and modeling.
 }
 \details{

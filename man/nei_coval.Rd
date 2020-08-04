@@ -9,7 +9,7 @@ nei_coval(
   smap,
   scale,
   alpha = Inf,
-  kernel = "exp",
+  kernel = c("exp", "gaussian"),
   grouping = rep(1, nrow(smap)),
   n_core = 1L
 )
@@ -17,15 +17,15 @@ nei_coval(
 \arguments{
 \item{geno}{An individual x marker matrix. Bialleles (i.e., A or a) must be converted into -1 or 1 digit.}
 
-\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along a x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial points along an x-axis and y-axis, respectively.}
 
 \item{scale}{A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.}
 
-\item{alpha}{Distance decay coefficient \eqn{\alpha} in a dispersal kernel. Default is set at Inf, meaning no distance decay.}
+\item{alpha}{An option to set a distance decay coefficient \eqn{\alpha} in a dispersal kernel. Default is set at Inf, meaning no distance decay.}
 
-\item{kernel}{Type of dispersal kernel in the distance decay. Select \code{"exp"} or \code{"gaussian"} for a negative exponential kernel (fat-tailed) or Gaussian kernel (thin-tailed), respectively.}
+\item{kernel}{An option to select either \code{"exp"} or \code{"gaussian"} for a negative exponential kernel or Gaussian kernel, respectively.}
 
-\item{grouping}{A integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{A positive integer vector assigning each individual to a group. This argument can be useful when a "smap" contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{n_core}{No. of cores for a multi-core computation. This does not work for Windows OS. Default is a single-core computation.}
 }
@@ -34,6 +34,12 @@ A numeric matrix for neighbor covariates, with no. of individuals x markers.
 }
 \description{
 A function to calculate neighbor genotypic identity, with a given reference scale and a degree of distance decay.
+}
+\details{
+Default setting is recommended for \code{alpha} and \code{kernel} arguments unless spatial distance decay of neighbor effects needs to be modeled.
+If \code{alpha} is not \code{Inf}, output variables are weighted by a distance decay from a focal individual to \code{scale}.
+For the type of dispersal kernel in the distance decay, we can choose a negative exponential or Gaussian kernel as a fat-tailed or thin-tailed distribution, respectively.
+See Nathan et al. (2012) for detailed characteristics of the two dispersal kernels.
 }
 \examples{
 set.seed(1)
@@ -47,7 +53,7 @@ grouping <- c(rep(1,nrow(g)/2), rep(2,nrow(g)/2))
 g_nei <- nei_coval(g,smap,44,grouping = grouping)
 }
 \references{
-Nathan R, Klein E, Robledo-Arnuncio JJ, Revilla E, (2012) Dispersal kernels: review. In: Clobert J, Baguette M, Benton TG, Bullock JM (Eds.), \emph{Dispersal Ecology and Evolution}. Oxford University Press, pp.186-210.
+Nathan R, Klein E, Robledo-Arnuncio JJ, Revilla E. (2012) Dispersal kernels: review. In: Clobert J, Baguette M, Benton TG, Bullock JM (Eds.), \emph{Dispersal Ecology and Evolution}. Oxford University Press, pp.186-210.
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

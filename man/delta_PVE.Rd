@@ -20,7 +20,7 @@ Estimated effective scale and proportion of phenotypic variation explained by ne
 A function to calculate \eqn{\Delta}PVE that estimates the effective scale of neighbor effects.
 }
 \seealso{
-calc_PVEnei
+\code{\link{calc_PVEnei}}
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
