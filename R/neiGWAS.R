@@ -50,7 +50,7 @@
 #' gaston::manhattan(gwas_out)
 #' gaston::qqplot.pvalues(gwas_out$p)
 #' @export
-neiGWAS = function(geno, pheno, gmap, smap, scale, addcovar=NULL, grouping, response=c("quantitative","binary"), model=c("lmm","lm"), n_core=1L) {
+neiGWAS = function(geno, pheno, gmap, smap, scale, addcovar=NULL, grouping=rep(1,nrow(smap)), response=c("quantitative","binary"), model=c("lmm","lm"), n_core=1L) {
   response <- match.arg(response)
   model <- match.arg(model)
 

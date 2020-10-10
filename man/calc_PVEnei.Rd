@@ -36,8 +36,9 @@ calc_PVEnei(
 A numeric matrix including a given spatial scale, PVE by neighbor effects, and p-values.
 \itemize{
 \item{\code{scale}} {Maximum neighbor distance given as an argument}
+\item{\code{PVEself}} {Proportion of phenotypic variation explained (PVE) by self effects. RVE is returned when \code{response = "binary"}}
 \item{\code{PVEnei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects. RVE is returned when \code{response = "binary"}}
-\item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects. NA when \code{response = "binary"}}
+\item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects (when s is not zero); or between a null model and model with self effects alone (when s = 0). NA when \code{response = "binary"}}
 }
 }
 \description{

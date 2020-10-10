@@ -30,7 +30,7 @@
 #' fake_nei[[4]] <- data.frame(pheno,grouping)
 #' names(fake_nei) <- c("geno","gmap","smap","pheno")
 #' @export
-nei_simu = function(geno, smap, scale, alpha=Inf, grouping=grouping, kernel=c("exp","gaussian"), n_causal, pveB, pve, b_ratio=c(1,1)) {
+nei_simu = function(geno, smap, scale, alpha=Inf, grouping=rep(1,nrow(smap)), kernel=c("exp","gaussian"), n_causal, pveB, pve, b_ratio=c(1,1)) {
   kernel <- match.arg(kernel)
 
   g_nei <- nei_coval(geno=geno, smap=smap, scale=scale, alpha=alpha, grouping=grouping, kernel=kernel)

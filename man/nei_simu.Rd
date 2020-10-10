@@ -9,7 +9,7 @@ nei_simu(
   smap,
   scale,
   alpha = Inf,
-  grouping = grouping,
+  grouping = rep(1, nrow(smap)),
   kernel = c("exp", "gaussian"),
   n_causal,
   pveB,

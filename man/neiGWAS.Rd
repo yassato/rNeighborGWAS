@@ -11,7 +11,7 @@ neiGWAS(
   smap,
   scale,
   addcovar = NULL,
-  grouping,
+  grouping = rep(1, nrow(smap)),
   response = c("quantitative", "binary"),
   model = c("lmm", "lm"),
   n_core = 1L

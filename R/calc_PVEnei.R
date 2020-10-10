@@ -12,8 +12,9 @@
 #' @return A numeric matrix including a given spatial scale, PVE by neighbor effects, and p-values.
 #' \itemize{
 #'  \item{\code{scale}} {Maximum neighbor distance given as an argument}
+#'  \item{\code{PVEself}} {Proportion of phenotypic variation explained (PVE) by self effects. RVE is returned when \code{response = "binary"}}
 #'  \item{\code{PVEnei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects. RVE is returned when \code{response = "binary"}}
-#'  \item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects. NA when \code{response = "binary"}}
+#'  \item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects (when s is not zero); or between a null model and model with self effects alone (when s = 0). NA when \code{response = "binary"}}
 #' }
 #' @details
 #' This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
@@ -71,12 +72,12 @@ calc_PVEnei = function(pheno, geno, smap, scale_seq, addcovar=NULL, grouping=rep
     res0 <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self), verbose=FALSE)
     PVEs <- res0$tau[1]/sum(res0$tau, res0$sigma2)
     p_val <- stats::pchisq(2*(res0$logL-res0$logL0), 1, lower.tail=FALSE)
-    resList <- c(0, PVEs, p_val)
+    resList <- c(0, PVEs, 0, p_val)
   } else { # if(response=="binary"){
     res0 <- gaston::logistic.mm.aireml(Y=pheno, X=X, K=list(K_self), verbose=FALSE)
     PVEs <- res0$tau
     p_val <- NA
-    resList <- c(0, PVEs, p_val)
+    resList <- c(0, PVEs, 0, p_val)
   }
 
   for(s in scale_seq) {
@@ -88,16 +89,18 @@ calc_PVEnei = function(pheno, geno, smap, scale_seq, addcovar=NULL, grouping=rep
 
     if(response=="quantitative") {
       res <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self,K_nei), verbose=FALSE)
+	  PVEself <- res$tau[1]/sum(res$tau, res$sigma2)
       PVEnei <- res$tau[2]/sum(res$tau, res$sigma2)
       p_val <- stats::pchisq(2*(res$logL-res0$logL), 1, lower.tail=FALSE)
     } else {
       res <- gaston::logistic.mm.aireml(Y=pheno, X=X, K=list(K_self,K_nei), verbose=FALSE)
+	  PVEself <- res$tau[1]/res$tau[2]
       PVEnei <- res$tau[2]/res$tau[1]
       p_val <- NA
     }
-    resList <- rbind(resList, c(s, PVEnei, p_val))
+    resList <- rbind(resList, c(s, PVEself, PVEnei, p_val))
   }
-  colnames(resList) <- c("scale", "PVEnei", "p_val")
+  colnames(resList) <- c("scale", "PVEself", "PVEnei", "p_val")
   resList <- as.data.frame(resList)
   rownames(resList) <- NULL
   return(resList)

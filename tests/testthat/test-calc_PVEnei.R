@@ -37,9 +37,9 @@ test_that(
                            addcovar=as.matrix(fake_nei$pheno$grouping),
                            grouping=fake_nei$pheno$grouping, response="binary")
 
-    expect_true(all(round(pve_out[,2],1)>=0))
-    expect_true(all(round(pve_out[,2],1)<=1))
+    expect_true(all(round(pve_out$PVEnei,1)>=0))
+    expect_true(all(round(pve_out$PVEnei,1)<=1))
 
-    expect_true(all(is.na(pve_bin[,3])))
+    expect_true(all(is.na(pve_bin$p_val)))
   }
 )
