@@ -11,7 +11,7 @@ Note that the rNeighborGWAS requires the following R packages.
 - parallel
 
 ## Release Notes
-version 1.2.2 (developer version): partial PVEs separated in calc_PVEnei(); nei_lmm() separated from neiGWAS().  
+version 1.2.2 (developer version): partial PVEs separated in calc_PVEnei(); nei_lm() separated from neiGWAS().  
 version 1.2.1 (CRAN release version): testthat files fixed.  
 version 1.2.0: nei_lmm() and gaston2neiGWAS() added; nei_coval() and neiGWAS() refactored.  
 version 1.0.0: Initial version registered in CRAN.  
