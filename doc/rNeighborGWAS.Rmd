@@ -67,7 +67,7 @@ delta_PVE(pve_out)
 ## Association mapping
 <p>Based on the estimated scale of neighbor effects, we then perform genome-wide association mapping of neighbor effects as follows.</p>
 ```{r GWAS}
-scale <- 43.56
+scale <- 43.9
 gwas_out <- neiGWAS(geno=fake_nei$geno, pheno=fake_nei$pheno[,1],
                     gmap=fake_nei$gmap, smap=fake_nei$smap,
                     scale=scale, addcovar=as.matrix(fake_nei$pheno$grouping),
@@ -81,7 +81,7 @@ gaston::qqplot.pvalues(gwas_out$p)
 ## Linear mixed models
 <p>To separate linear mixed models from "neiGWAS()", we can rewrite the code for association mapping. The "nei_coval()" calculates neighbor genotypic identity. The "nei_lmm()" takes them as an input and performs association tests for self and neighbor effects.</p>
 ```{r LMM, eval=FALSE}
-scale <- 43.56
+scale <- 43.9
 g_nei <- nei_coval(geno=fake_nei$geno, smap=fake_nei$smap,
                    scale=scale, grouping=fake_nei$pheno$grouping
                    )

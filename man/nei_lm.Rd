@@ -31,7 +31,7 @@ A data.frame including coefficients and p-values of self and neighbor effects, w
 \itemize{
 \item{\code{beta_self}} {coefficient for self effects}
 \item{\code{beta_self}} {coefficient for neighbor effects}
-\item{\code{p_self}} {p-value for self effects by a likelihood ratio test between a null and standard GWAS model}
+\item{\code{p_self}} {p-value for self effects by a likelihood ratio test between a null and standard linear model}
 \item{\code{p_nei}} {p-value for neighbor effects by a likelihood ratio test between models with or without neighbor effects}
 }
 }
@@ -39,7 +39,10 @@ A data.frame including coefficients and p-values of self and neighbor effects, w
 A function to provide coefficients and p-values of self and neighbor effects for each marker.
 }
 \details{
-This function is a subset of \code{neiGWAS()}. \code{nei_lm()} gives detailed results but requires more computational time.
+This function is a subset of \code{neiGWAS()}. \code{nei_lm()} gives detailed results when the option \code{model="lm"} is selected in \code{neiGWAS()}.
+}
+\seealso{
+\code{\link{neiGWAS}}
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

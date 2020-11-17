@@ -17,6 +17,7 @@
 #' @details This function is a subset of \code{neiGWAS()}. \code{nei_lmm()} gives detailed results but requires more computational time.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @import Matrix gaston parallel
+#' @seealso \code{\link{neiGWAS}}
 #' @export
 nei_lmm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative","binary"), n_core=1L) {
   response <- match.arg(response)

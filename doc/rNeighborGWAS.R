@@ -46,7 +46,7 @@ pve_out <- calc_PVEnei(geno=fake_nei$geno, pheno=fake_nei$pheno[,1],
 delta_PVE(pve_out)
 
 ## ----GWAS---------------------------------------------------------------------
-scale <- 43.56
+scale <- 43.9
 gwas_out <- neiGWAS(geno=fake_nei$geno, pheno=fake_nei$pheno[,1],
                     gmap=fake_nei$gmap, smap=fake_nei$smap,
                     scale=scale, addcovar=as.matrix(fake_nei$pheno$grouping),
@@ -57,7 +57,7 @@ gaston::manhattan(gwas_out)
 gaston::qqplot.pvalues(gwas_out$p)
 
 ## ----LMM, eval=FALSE----------------------------------------------------------
-#  scale <- 43.56
+#  scale <- 43.9
 #  g_nei <- nei_coval(geno=fake_nei$geno, smap=fake_nei$smap,
 #                     scale=scale, grouping=fake_nei$pheno$grouping
 #                     )

@@ -41,6 +41,9 @@ A function to provide coefficients and p-values of self and neighbor effects for
 \details{
 This function is a subset of \code{neiGWAS()}. \code{nei_lmm()} gives detailed results but requires more computational time.
 }
+\seealso{
+\code{\link{neiGWAS}}
+}
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 }
