@@ -1,6 +1,5 @@
 # rNeighborGWAS    
-This is a developer version of the rNeighborGWAS package.  
-Please see *vignette("rNeighborGWAS")* for usage.  
+This is a developer version of the rNeighborGWAS package. Please see *vignette("rNeighborGWAS")* for usage.  
 CRAN version is available at https://cran.r-project.org/package=rNeighborGWAS.  
 
 ## Installation
