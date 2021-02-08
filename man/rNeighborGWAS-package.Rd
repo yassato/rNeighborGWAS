@@ -8,7 +8,7 @@
 \description{
 This package provides a set of functions to test neighbor effects in genome-wide association studies.
 The neighbor effects are estimated using the Ising model of ferromagnetism.
-See Sato et al. (2019) for motivation and modeling.
+See Sato et al. (2021) for motivation and modeling.
 }
 \details{
 The flow of neighbor GWAS consists of two steps, (i) variation partitioning and (ii) association mapping.
@@ -22,7 +22,7 @@ A developer version of rNeighborGWAS is available at the GitHub reporsitory (\ur
 If the CRAN version is out of work or you want to use the latest methods, you may install the package via GitHub.
 }
 \references{
-Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2019) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on \emph{Arabidopsis thaliana}. bioRxiv https://doi.org/10.1101/845735
+Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity https://doi.org/10.1038/s41437-020-00401-w
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ## Overview
-<p>This R package provides a set of functions to test neighbor effects in marker-based regressions. In this vignette, we first estimate an effective range of neighbor effects, and then perform an association mapping of neighbor effects. See Sato et al. (2019) for model description.</p>
+<p>This R package provides a set of functions to test neighbor effects in marker-based regressions. In this vignette, we first estimate an effective range of neighbor effects, and then perform an association mapping of neighbor effects. See Sato et al. (2021) for model description.</p>
 
 ## Input files
 <p>First, let us see the data structure of input files necessary for the neighbor GWAS. Here is an example using a phenotype simulated from "TTN" genotype in the "gaston" package (Perdry & Dandine-Roulland 2020). Genotype data are a matrix including individuals (rows) x markers (columns) with -1 or +1 digit for bialleles. A spatial map indicates a individual distribution along x- and y-axes in a 2D space.</p>
@@ -123,6 +123,6 @@ gwas_out <- nei_lmm(geno=fake_nei$geno, g_nei=g_nei,
 
 
 ## References
-- Perdry H, Dandine-Roulland C. 2020. gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.6. https://CRAN.R-project.org/package=gaston  
-- Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2019) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on *Arabidopsis thaliana*. bioRxiv https://doi.org/10.1101/845735
+- Perdry H, Dandine-Roulland C. (2020) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.6. https://CRAN.R-project.org/package=gaston  
+- Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity https://doi.org/10.1038/s41437-020-00401-w
 

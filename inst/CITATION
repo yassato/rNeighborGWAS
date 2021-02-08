@@ -2,13 +2,13 @@ citHeader("To cite rNeighborGWAS in publications use:")
 
 citEntry(
   entry    = "Article",
-  title    = "Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on Arabidopsis thaliana",
+  title    = "Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory",
   author   = personList(as.person("Yasuhiro Sato"),
                              as.person("Eiji Yamamoto"),
                              as.person("Kentaro K. Shimizu"),
 							 as.person("Atsushi J. Nagano")),
-  journal  = "bioRxiv",
-  year     = "2019",
-  DOI      = "10.1101/845735",
-  textVersion = paste("Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2019) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on Arabidopsis thaliana. bioRxiv https://doi.org/10.1101/845735")
+  journal  = "Heredity",
+  year     = "2021",
+  DOI      = "10.1038/s41437-020-00401-w",
+  textVersion = paste("Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity https://doi.org/10.1038/s41437-020-00401-w")
 )
