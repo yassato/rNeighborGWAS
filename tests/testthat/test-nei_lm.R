@@ -30,21 +30,38 @@ test_that(
                         gmap=fake_nei$gmap, smap=fake_nei$smap,
                         scale=scale, addcovar=as.matrix(fake_nei$pheno$grouping),
                         grouping=fake_nei$pheno$grouping, model="lm")
-    
+
     res_lm <- nei_lm(geno=fake_nei$geno,g_nei=g_nei,
                       pheno=fake_nei$pheno$pheno,
                       addcovar=as.matrix(fake_nei$pheno$grouping))
-    
+
     gwas_glm <- neiGWAS(geno=fake_nei$geno, pheno=pheno_bin,
                          gmap=fake_nei$gmap, smap=fake_nei$smap,
                          scale=scale, addcovar=as.matrix(fake_nei$pheno$grouping),
                          grouping=fake_nei$pheno$grouping, response="binary", model="lm")
-    
+
     res_glm <- nei_lm(geno=fake_nei$geno,g_nei=g_nei,
                        pheno=pheno_bin,
                        addcovar=as.matrix(fake_nei$pheno$grouping), response="binary")
-    
+
     expect_equal(-log10(gwas_lm$p), -log10(res_lm$p_nei))
     expect_equal(-log10(gwas_glm$p), -log10(res_glm$p_nei))
   }
 )
+
+test_that(
+  desc = "work_asymmetry",
+  code = {
+
+    res_lm <- nei_lm(geno=fake_nei$geno,g_nei=g_nei,
+                       pheno=fake_nei$pheno$pheno,
+                       addcovar=as.matrix(fake_nei$pheno$grouping),asym=TRUE)
+
+    res_glm <- nei_lm(geno=fake_nei$geno,g_nei=g_nei,
+                        pheno=pheno_bin,addcovar=as.matrix(fake_nei$pheno$grouping),
+                        response="binary",asym=TRUE)
+
+    expect_equal(nrow(res_lm), nrow(res_glm))
+  }
+)
+

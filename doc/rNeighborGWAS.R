@@ -93,3 +93,14 @@ gaston::qqplot.pvalues(gwas_out$p)
 #                      response="binary"
 #                      )
 
+## ----asymmetry, eval=FALSE----------------------------------------------------
+#  scale <- 43.9
+#  g_nei <- nei_coval(geno=fake_nei$geno, smap=fake_nei$smap,
+#                     scale=scale, grouping=fake_nei$pheno$grouping
+#                     )
+#  
+#  gwas_out <- nei_lmm(geno=fake_nei$geno, g_nei=g_nei,
+#                      pheno=fake_nei$pheno[,1],
+#                      addcovar=as.matrix(fake_nei$pheno$grouping),
+#                      asym=TRUE)
+

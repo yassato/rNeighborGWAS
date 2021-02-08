@@ -7,6 +7,7 @@
 #' @param addcovar An optional matrix including additional non-genetic covariates. It contains no. of individuals x no. of covariates.
 #' @param response An option to select if the phenotype is a \code{"quantitative"} trait subject to linear models, or a \code{"binary"} trait subject to logistic models.
 #' @param n_core No. of cores for a multi-core computation. This does not work for Windows OS. Default is a single-core computation.
+#' @param asym If TRUE, asymmetric neighbor effects are also tested and returned as "beta_sxn" and "p_sxn".
 #' @return A data.frame including coefficients and p-values of self and neighbor effects, without the chromosome numbers and marker position.
 #' \itemize{
 #'  \item{\code{beta_self}} {coefficient for self effects}
@@ -19,20 +20,20 @@
 #' @import Matrix gaston parallel
 #' @seealso \code{\link{neiGWAS}}
 #' @export
-nei_lm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative","binary"), n_core=1L) {
+nei_lm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative","binary"), n_core=1L, asym=FALSE) {
   response <- match.arg(response)
-  
+
   RcppParallel::setThreadOptions(numThreads=n_core)
-  
+
   geno[is.na(geno)] <- 0L
   q <- ncol(geno)
-  
+
   if(is.null(addcovar)) {
     X <- matrix(1, nrow=length(pheno))
   } else {
     X <- cbind(addcovar)
   }
-  
+
   if(response=="quantitative") {
     res00 <- stats::lm(pheno~X)
     LL00 <- stats::logLik(res00)[1]
@@ -40,44 +41,73 @@ nei_lm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative","
     res00 <- stats::glm(pheno~X, family="binomial")
     LL00 <- stats::logLik(res00)[1]
   }
-  
+
   test_marker_i = function(i) {
     if(response=="quantitative") {
       X0 <- cbind(addcovar, geno[,i])
       X1 <- cbind(X0, g_nei[,i])
-      
+      if(asym==TRUE) { X2 <- cbind(X1, geno[,i]*g_nei[,i]) }
+
       LL_self0 <- stats::logLik(stats::lm(pheno~X0))[1]
       p_self <- stats::pchisq(-2*(LL00-LL_self0), 1, lower.tail=FALSE)
-      
+
       LL_nei <- stats::logLik(stats::lm(pheno~X1))[1]
       p_nei <- stats::pchisq(-2*(LL_self0-LL_nei), 1, lower.tail=FALSE)
-      
-      lmm_nei <- summary(stats::lm(pheno~X1))
-      beta <- lmm_nei$coef[-1:0+nrow(lmm_nei$coef),1]
-      
-      resList <- c(beta, p_self, p_nei)
-      return(resList)
+
+      if(asym==TRUE) {
+        LL_sxn <- stats::logLik(stats::lm(pheno~X2))[1]
+        p_sxn <- stats::pchisq(-2*(LL_nei-LL_sxn), 1, lower.tail=FALSE)
+
+        lmm_nei <- summary(stats::lm(pheno~X2))
+        beta <- lmm_nei$coef[-2:0+nrow(lmm_nei$coef),1]
+
+        resList <- c(beta, p_self, p_nei, p_sxn)
+        return(resList)
+      } else { #if(asym==FALSE)
+        lmm_nei <- summary(stats::lm(pheno~X1))
+        beta <- lmm_nei$coef[-1:0+nrow(lmm_nei$coef),1]
+
+        resList <- c(beta, p_self, p_nei)
+        return(resList)
+      }
+
     } else { # if(response=="binary") {
       X0 <- cbind(addcovar, geno[,i])
       X1 <- cbind(X0, g_nei[,i])
-      
+      if(asym==TRUE) { X2 <- cbind(X1, geno[,i]*g_nei[,i]) }
+
       LL_self0 <- stats::logLik(stats::glm(pheno~X0, family="binomial"))[1]
       p_self <- stats::pchisq(-2*(LL00-LL_self0), 1, lower.tail=FALSE)
-      
+
       LL_nei <- stats::logLik(stats::glm(pheno~X1, family="binomial"))[1]
       p_nei <- stats::pchisq(-2*(LL_self0-LL_nei), 1, lower.tail=FALSE)
-      
-      lmm_nei <- summary(stats::glm(pheno~X1, family="binomial"))
-      beta <- lmm_nei$coef[-1:0+nrow(lmm_nei$coef),1]
-      
-      resList <- c(beta, p_self, p_nei)
-      return(resList)
+
+      if(asym==TRUE) {
+        LL_sxn <- stats::logLik(stats::glm(pheno~X2, family="binomial"))[1]
+        p_sxn <- stats::pchisq(-2*(LL_nei-LL_sxn), 1, lower.tail=FALSE)
+
+        lmm_nei <- summary(stats::glm(pheno~X2, family="binomial"))
+        beta <- lmm_nei$coef[-2:0+nrow(lmm_nei$coef),1]
+
+        resList <- c(beta, p_self, p_nei, p_sxn)
+        return(resList)
+      } else { #if(asym==FALSE)
+        lmm_nei <- summary(stats::glm(pheno~X1, family="binomial"))
+        beta <- lmm_nei$coef[-1:0+nrow(lmm_nei$coef),1]
+
+        resList <- c(beta, p_self, p_nei)
+        return(resList)
+      }
+
     }
   }
   results <- do.call(rbind, parallel::mcmapply(test_marker_i, 1:q, mc.cores=getOption("mc.cores",n_core), SIMPLIFY=FALSE, USE.NAMES=FALSE))
-  
-  colnames(results) <- c("beta_self", "beta_nei", "p_self", "p_nei")
+
+  if(asym==TRUE) {
+    colnames(results) <- c("beta_self", "beta_nei", "beta_sxn", "p_self", "p_nei", "p_sxn")
+  } else { #if(asym==FALSE)
+    colnames(results) <- c("beta_self", "beta_nei", "p_self", "p_nei")
+  }
   results <- as.data.frame(results)
-  
   return(results)
 }

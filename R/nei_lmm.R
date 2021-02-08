@@ -7,6 +7,7 @@
 #' @param addcovar An optional matrix including additional non-genetic covariates. It contains no. of individuals x no. of covariates.
 #' @param response An option to select if the phenotype is a \code{"quantitative"} trait subject to linear models, or a \code{"binary"} trait subject to logistic models.
 #' @param n_core No. of cores for a multi-core computation. This does not work for Windows OS. Default is a single-core computation.
+#' @param asym If TRUE, asymmetric neighbor effects are also tested and returned as "beta_sxn" and "p_sxn".
 #' @return A data.frame including coefficients and p-values of self and neighbor effects, without the chromosome numbers and marker position.
 #' \itemize{
 #'  \item{\code{beta_self}} {coefficient for self effects}
@@ -19,7 +20,7 @@
 #' @import Matrix gaston parallel
 #' @seealso \code{\link{neiGWAS}}
 #' @export
-nei_lmm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative","binary"), n_core=1L) {
+nei_lmm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative","binary"), n_core=1L, asym=FALSE) {
   response <- match.arg(response)
 
   RcppParallel::setThreadOptions(numThreads=n_core)
@@ -30,9 +31,11 @@ nei_lmm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative",
   K_self <- tcrossprod(geno)
   K_self <- ((q-1)/2+K_self/2)/(q-1)
   K_nei <- tcrossprod(g_nei)/(q-1)
+  if(asym==TRUE) { K_sxn <- tcrossprod(geno*g_nei)/(q-1) }
 
   K_self <- as.matrix(Matrix::nearPD(K_self,maxit=10^6)$mat)
   K_nei <- as.matrix(Matrix::nearPD(K_nei,maxit=10^6)$mat)
+  if(asym==TRUE) { K_sxn <- as.matrix(Matrix::nearPD(K_sxn,maxit=10^6)$mat) }
 
   if(is.null(addcovar)) {
     X <- matrix(1, nrow=length(pheno))
@@ -54,10 +57,18 @@ nei_lmm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative",
   eiK <- eigen(K)
   res01 <- gaston::lmm.diago(Y=pheno, X=X, eigenK=eiK, verbose=FALSE)
 
+  if(asym==TRUE) {
+    aireml <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self,K_nei,K_sxn), verbose=FALSE)
+    Ksn <- aireml$tau[1]*K_self + aireml$tau[2]*K_nei + aireml$tau[3]*K_sxn
+    eiKsn <- eigen(Ksn)
+    res02 <- gaston::lmm.diago(Y=pheno, X=X, eigenK=eiK, verbose=FALSE)
+  }
+
   test_marker_i = function(i) {
     if(response=="quantitative") {
       X0 <- cbind(1, addcovar, geno[,i])
       X1 <- cbind(X0, g_nei[,i])
+      if(asym==TRUE) { X2 <- cbind(X1, geno[,i]*g_nei[,i]) }
 
       LL_self0 <- gaston::lmm.diago.profile.likelihood(tau=res00$tau, s2=res00$sigma2, Y=pheno, X=X0, eigenK=eiKs)[1,1]
       p_self <- stats::pchisq(-2*(LL00-LL_self0), 1, lower.tail=FALSE)
@@ -66,26 +77,53 @@ nei_lmm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative",
       LL_nei <- gaston::lmm.diago.profile.likelihood(tau=res01$tau, s2=res01$sigma2, Y=pheno, X=X1, eigenK=eiK)[1,1]
       p_nei <- stats::pchisq(-2*(LL_self1-LL_nei), 1, lower.tail=FALSE)
 
-      lmm_nei <- gaston::lmm.diago(Y=pheno, X=X1, eigenK=eiK, verbose=FALSE)
-      beta <- lmm_nei$BLUP_beta[-1:0+length(lmm_nei$BLUP_beta)]
+      if(asym==TRUE) {
+        LL_nei1 <- gaston::lmm.diago.profile.likelihood(tau=res02$tau, s2=res02$sigma2, Y=pheno, X=X1, eigenK=eiKsn)[1,1]
+        LL_sxn <- gaston::lmm.diago.profile.likelihood(tau=res02$tau, s2=res02$sigma2, Y=pheno, X=X2, eigenK=eiKsn)[1,1]
+        p_sxn <- stats::pchisq(-2*(LL_nei1-LL_sxn), 1, lower.tail=FALSE)
 
-      resList <- c(beta, p_self, p_nei)
-      return(resList)
+        lmm_nei <- gaston::lmm.diago(Y=pheno, X=X2, eigenK=eiKsn, verbose=FALSE)
+        beta <- lmm_nei$BLUP_beta[-2:0+length(lmm_nei$BLUP_beta)]
+
+        resList <- c(beta, p_self, p_nei, p_sxn)
+        return(resList)
+      } else { #if(asym==FALSE) {
+        lmm_nei <- gaston::lmm.diago(Y=pheno, X=X1, eigenK=eiK, verbose=FALSE)
+        beta <- lmm_nei$BLUP_beta[-1:0+length(lmm_nei$BLUP_beta)]
+
+        resList <- c(beta, p_self, p_nei)
+        return(resList)
+      }
+
     } else { # if(response=="binary") {
-      res <- gaston::logistic.mm.aireml(Y=pheno, X=cbind(1,addcovar,geno[,i],g_nei[,i]), K=list(K_self,K_nei), verbose=FALSE)
-      beta <- res$BLUP_beta[-1:0+length(res$BLUP_beta)]
-      z_val <- res$BLUP_beta/sqrt(diag(res$varbeta))
-      p_val <- stats::pchisq(z_val^2, 1, lower.tail=FALSE)[c((length(z_val)-1), length(z_val))]
+      if(asym==TRUE) {
+        res <- gaston::logistic.mm.aireml(Y=pheno, X=cbind(1,addcovar,geno[,i],g_nei[,i],geno[,i]*g_nei[,i]), K=list(K_self,K_nei,K_sxn), verbose=FALSE)
+        beta <- res$BLUP_beta[-2:0+length(res$BLUP_beta)]
+        z_val <- res$BLUP_beta/sqrt(diag(res$varbeta))
+        p_val <- stats::pchisq(z_val^2, 1, lower.tail=FALSE)[c((length(z_val)-2), (length(z_val)-1), length(z_val))]
 
-      resList <- c(beta, p_val)
-      return(resList)
+        resList <- c(beta, p_val)
+        return(resList)
+      } else { #if(asym==FALSE) {
+        res <- gaston::logistic.mm.aireml(Y=pheno, X=cbind(1,addcovar,geno[,i],g_nei[,i]), K=list(K_self,K_nei), verbose=FALSE)
+        beta <- res$BLUP_beta[-1:0+length(res$BLUP_beta)]
+        z_val <- res$BLUP_beta/sqrt(diag(res$varbeta))
+        p_val <- stats::pchisq(z_val^2, 1, lower.tail=FALSE)[c((length(z_val)-1), length(z_val))]
+
+        resList <- c(beta, p_val)
+        return(resList)
+      }
+
     }
   }
   results <- do.call(rbind, parallel::mcmapply(test_marker_i, 1:q, mc.cores=getOption("mc.cores",n_core), SIMPLIFY=FALSE, USE.NAMES=FALSE))
 
-  colnames(results) <- c("beta_self", "beta_nei", "p_self", "p_nei")
+  if(asym==TRUE) {
+    colnames(results) <- c("beta_self", "beta_nei", "beta_sxn", "p_self", "p_nei", "p_sxn")
+  } else { #if(asym==FALSE) {
+    colnames(results) <- c("beta_self", "beta_nei", "p_self", "p_nei")
+  }
   results <- as.data.frame(results)
-
   return(results)
 }
 

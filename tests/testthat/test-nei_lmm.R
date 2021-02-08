@@ -48,3 +48,19 @@ test_that(
     expect_equal(-log10(gwas_glmm$p), -log10(res_glmm$p_nei))
   }
 )
+
+test_that(
+  desc = "work_asymmetry",
+  code = {
+
+    res_lmm <- nei_lmm(geno=fake_nei$geno,g_nei=g_nei,
+                       pheno=fake_nei$pheno$pheno,
+                       addcovar=as.matrix(fake_nei$pheno$grouping),asym=TRUE)
+
+    res_glmm <- nei_lmm(geno=fake_nei$geno,g_nei=g_nei,
+                        pheno=pheno_bin,addcovar=as.matrix(fake_nei$pheno$grouping),
+                        response="binary",asym=TRUE)
+
+    expect_equal(nrow(res_lmm), nrow(res_glmm))
+  }
+)

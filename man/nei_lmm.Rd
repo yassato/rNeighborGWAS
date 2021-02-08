@@ -10,7 +10,8 @@ nei_lmm(
   pheno,
   addcovar = NULL,
   response = c("quantitative", "binary"),
-  n_core = 1L
+  n_core = 1L,
+  asym = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ nei_lmm(
 \item{response}{An option to select if the phenotype is a \code{"quantitative"} trait subject to linear models, or a \code{"binary"} trait subject to logistic models.}
 
 \item{n_core}{No. of cores for a multi-core computation. This does not work for Windows OS. Default is a single-core computation.}
+
+\item{asym}{If TRUE, asymmetric neighbor effects are also tested and returned as "beta_sxn" and "p_sxn".}
 }
 \value{
 A data.frame including coefficients and p-values of self and neighbor effects, without the chromosome numbers and marker position.

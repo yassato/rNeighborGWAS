@@ -278,6 +278,21 @@ The line of analyses can work with logistic mixed models that allow a binary phe
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                    <span class="at">response=</span><span class="st">&quot;binary&quot;</span></span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>                    )</span></code></pre></div>
 </div>
+<div id="asymmetric-neighbor-effects" class="section level2">
+<h2>Asymmetric neighbor effects</h2>
+<p>
+If neighbor effects are asymmetric from one to another allele (see Sato et al. 2021 for the model), we can test it using the option “asym”. If asym==TRUE, an additional coefficient and <span class="math inline">\(p\)</span>-value of such asymmetric neighbor effects are added to the original results.
+</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>scale <span class="ot">&lt;-</span> <span class="fl">43.9</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>g_nei <span class="ot">&lt;-</span> <span class="fu">nei_coval</span>(<span class="at">geno=</span>fake_nei<span class="sc">$</span>geno, <span class="at">smap=</span>fake_nei<span class="sc">$</span>smap,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">scale=</span>scale, <span class="at">grouping=</span>fake_nei<span class="sc">$</span>pheno<span class="sc">$</span>grouping</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                   )</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>gwas_out <span class="ot">&lt;-</span> <span class="fu">nei_lmm</span>(<span class="at">geno=</span>fake_nei<span class="sc">$</span>geno, <span class="at">g_nei=</span>g_nei,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pheno=</span>fake_nei<span class="sc">$</span>pheno[,<span class="dv">1</span>],</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">addcovar=</span><span class="fu">as.matrix</span>(fake_nei<span class="sc">$</span>pheno<span class="sc">$</span>grouping),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">asym=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
 <div id="references" class="section level2">
 <h2>References</h2>
 <ul>
