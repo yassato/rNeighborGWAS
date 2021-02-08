@@ -61,7 +61,7 @@ nei_lmm = function(geno, g_nei, pheno, addcovar=NULL, response=c("quantitative",
     aireml <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self,K_nei,K_sxn), verbose=FALSE)
     Ksn <- aireml$tau[1]*K_self + aireml$tau[2]*K_nei + aireml$tau[3]*K_sxn
     eiKsn <- eigen(Ksn)
-    res02 <- gaston::lmm.diago(Y=pheno, X=X, eigenK=eiK, verbose=FALSE)
+    res02 <- gaston::lmm.diago(Y=pheno, X=X, eigenK=eiKsn, verbose=FALSE)
   }
 
   test_marker_i = function(i) {
