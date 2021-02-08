@@ -3,7 +3,7 @@ This is a developer version of the rNeighborGWAS package. Please see *vignette("
 CRAN version is available at https://cran.r-project.org/package=rNeighborGWAS.  
 
 ## Installation
-Please install the package via GitHub using the devtools library as *devtools::install_github("yassato/rNeighborGWAS")*.  
+Please install the package via GitHub using the devtools library as *devtools::install_github("yassato/rNeighborGWAS", repo="master")*.  
 
 ## Dependency
 Note that the rNeighborGWAS requires the following R packages.  
