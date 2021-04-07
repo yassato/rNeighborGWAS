@@ -138,5 +138,5 @@ gwas_out <- nei_lmm(geno=fake_nei$geno, g_nei=g_nei,
 
 ## References
 - Perdry H, Dandine-Roulland C. (2020) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.6. https://CRAN.R-project.org/package=gaston  
-- Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity https://doi.org/10.1038/s41437-020-00401-w
+- Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity 126(4):597-614. https://doi.org/10.1038/s41437-020-00401-w
 

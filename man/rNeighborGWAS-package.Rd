@@ -22,7 +22,7 @@ A developer version of rNeighborGWAS is available at the GitHub reporsitory (\ur
 If the CRAN version is out of work or you want to use the latest methods, you may install the package via GitHub.
 }
 \references{
-Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity https://doi.org/10.1038/s41437-020-00401-w
+Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity 126(4):597-614. https://doi.org/10.1038/s41437-020-00401-w
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
