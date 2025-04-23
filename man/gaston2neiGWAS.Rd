@@ -2,19 +2,19 @@
 % Please edit documentation in R/gaston2neiGWAS.R
 \name{gaston2neiGWAS}
 \alias{gaston2neiGWAS}
-\title{Convert \link{gaston}'s bed.matrix data to rNeighborGWAS genotype data.}
+\title{Convert 'gaston' package's bed.matrix data to rNeighborGWAS genotype data.}
 \usage{
 gaston2neiGWAS(x)
 }
 \arguments{
-\item{x}{A \link{bed.matrix} created using the \code{gaston} package (Perdry & Dandine-Roulland 2020).}
+\item{x}{A 'bed.matrix' created using the \code{gaston} package (Perdry & Dandine-Roulland 2020).}
 }
 \value{
 A list including an individual x marker matrix, a data.frame including chromosome numbers in the first column, and SNP positions in the second column, and a numeric vector including phenotypes for individuals.
 \itemize{
-\item{\code{geno}} {Individual x marker matrix}
-\item{\code{gmap}} {Data.frame including chromosome numbers in the first column, and SNP positions in the second column}
-\item{\code{pheno}} {Numeric vector including phenotypes for individuals}
+\item geno Individual x marker matrix
+\item gmap Data.frame including chromosome numbers in the first column, and SNP positions in the second column
+\item pheno Numeric vector including phenotypes for individuals
 }
 }
 \description{

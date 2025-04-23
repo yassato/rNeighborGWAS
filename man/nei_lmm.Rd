@@ -32,10 +32,10 @@ nei_lmm(
 \value{
 A data.frame including coefficients and p-values of self and neighbor effects, without the chromosome numbers and marker position.
 \itemize{
-\item{\code{beta_self}} {coefficient for self effects}
-\item{\code{beta_self}} {coefficient for neighbor effects}
-\item{\code{p_self}} {p-value for self effects by a likelihood ratio test between a null and standard GWAS model}
-\item{\code{p_nei}} {p-value for neighbor effects by a likelihood ratio test between models with or without neighbor effects}
+\item beta_self coefficient for self effects
+\item beta_self coefficient for neighbor effects
+\item p_self p-value for self effects by a likelihood ratio test between a null and standard GWAS model
+\item p_nei p-value for neighbor effects by a likelihood ratio test between models with or without neighbor effects
 }
 }
 \description{

@@ -13,9 +13,9 @@
 #' @param n_core No. of cores for a multi-core computation. This does not work for Windows OS. Default is a single-core computation.
 #' @return A data.frame including the chromosome number, marker position, and p-values.
 #' \itemize{
-#'  \item{\code{chr}} {Chromosome number}
-#'  \item{\code{pos}} {Marker position}
-#'  \item{\code{p}} {p-value by a likelihood ratio test between models with or without neighbor effects}
+#'  \item chr Chromosome number
+#'  \item pos Marker position
+#'  \item p p-value by a likelihood ratio test between models with or without neighbor effects
 #' }
 #' @details
 #' This function calls a mixed model via the \code{gaston} package. If \code{"lmm"} with \code{"binary"} is selected, p-values are based on Wald tests.

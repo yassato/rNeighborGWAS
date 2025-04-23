@@ -10,10 +10,10 @@
 #' @param asym If TRUE, asymmetric neighbor effects are also tested and returned as "beta_sxn" and "p_sxn".
 #' @return A data.frame including coefficients and p-values of self and neighbor effects, without the chromosome numbers and marker position.
 #' \itemize{
-#'  \item{\code{beta_self}} {coefficient for self effects}
-#'  \item{\code{beta_self}} {coefficient for neighbor effects}
-#'  \item{\code{p_self}} {p-value for self effects by a likelihood ratio test between a null and standard linear model}
-#'  \item{\code{p_nei}} {p-value for neighbor effects by a likelihood ratio test between models with or without neighbor effects}
+#'  \item beta_self coefficient for self effects
+#'  \item beta_self coefficient for neighbor effects
+#'  \item p_self p-value for self effects by a likelihood ratio test between a null and standard GWAS model
+#'  \item p_nei p-value for neighbor effects by a likelihood ratio test between models with or without neighbor effects
 #' }
 #' @details This function is a subset of \code{neiGWAS()}. \code{nei_lm()} gives detailed results when the option \code{model="lm"} is selected in \code{neiGWAS()}.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

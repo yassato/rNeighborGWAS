@@ -1,6 +1,6 @@
 Package: rNeighborGWAS
 Title: Testing Neighbor Effects in Marker-Based Regressions
-Version: 1.2.3
+Version: 1.2.5
 Authors@R: c(
     person(given = "Yasuhiro", family = "Sato", role = c("aut", "cre"), email = "sato.yasuhiro.36c@kyoto-u.jp", comment = c(ORCID = "0000-0002-6466-723X")),
     person(given = "Eiji", family = "Yamamoto", role = "aut"),
@@ -9,9 +9,8 @@ Authors@R: c(
 Description: To incorporate neighbor genotypic identity into genome-wide association studies, the package provides a set of functions for variation partitioning and association mapping. The theoretical background of the method is described in Sato et al. (2021) <doi:10.1038/s41437-020-00401-w>.
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2
 Maintainer: Yasuhiro Sato <sato.yasuhiro.36c@kyoto-u.jp>
 Suggests:
     knitr,

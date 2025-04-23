@@ -11,10 +11,10 @@
 #' @param n_core No. of cores for a multi-core computation. This does not work for Windows OS. Default is a single-core computation.
 #' @return A numeric matrix including a given spatial scale, PVE by neighbor effects, and p-values.
 #' \itemize{
-#'  \item{\code{scale}} {Maximum neighbor distance given as an argument}
-#'  \item{\code{PVEself}} {Proportion of phenotypic variation explained (PVE) by self effects. RVE is returned when \code{response = "binary"}}
-#'  \item{\code{PVEnei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects. RVE is returned when \code{response = "binary"}}
-#'  \item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects (when s is not zero); or between a null model and model with self effects alone (when s = 0). NA when \code{response = "binary"}}
+#'  \item scale Maximum neighbor distance given as an argument
+#'  \item PVEself Proportion of phenotypic variation explained (PVE) by self effects. RVE is returned when \code{response = "binary"}
+#'  \item  PVEnei Proportion of phenotypic variation explained (PVE) by neighbor effects. RVE is returned when \code{response = "binary"}
+#'  \item  p-value p-value by a likelihood ratio test between models with or without neighbor effects (when s is not zero); or between a null model and model with self effects alone (when s = 0). NA when \code{response = "binary"}
 #' }
 #' @details
 #' This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
@@ -81,7 +81,7 @@ calc_PVEnei = function(pheno, geno, smap, scale_seq, addcovar=NULL, grouping=rep
   }
 
   for(s in scale_seq) {
-    if(class(s)=="numeric") { message("scale = ", round(s,3)) }
+    if(is.numeric(s)==TRUE) { message("scale = ", round(s,3)) }
     g_nei <- nei_coval(geno=geno0, smap=smap, scale=s, alpha=Inf, kernel="exp", grouping=grouping, n_core=n_core)
 
     K_nei <- tcrossprod(g_nei)/(q-1)
