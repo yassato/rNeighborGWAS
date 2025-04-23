@@ -11,7 +11,8 @@ Note that the rNeighborGWAS requires the following R packages.
 - parallel
 
 ## Release Notes
-version 1.2.3 (CRAN version): rebuild using R version 4.0.3; asymmetric neighbor effects are implemented.    
+version >1.2.4 (CRAN version): minor changes in manuals following CRAN's documentation policy 
+version 1.2.3: rebuild using R version 4.0.3; asymmetric neighbor effects are implemented.    
 version 1.2.2: partial PVEs provided by calc_PVEnei(); nei_lm() added.  
 version 1.2.1: testthat files fixed.  
 version 1.2.0: nei_lmm() and gaston2neiGWAS() added; nei_coval() and neiGWAS() refactored.  
